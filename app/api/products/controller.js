@@ -150,8 +150,8 @@ const getById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    const { data, page } = await table.ProductModel.get(req);
-    res.send({ status: true, data, page });
+    const { data } = await table.ProductModel.get(req);
+    res.send({ status: true, data });
   } catch (error) {
     console.error(error);
     res
