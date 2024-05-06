@@ -194,6 +194,7 @@ const convertToOrder = async (req, res) => {
         user_id: record?.user_id,
         po_number: record?.po_number,
         po_file: record?.po_file,
+        pincode: record?.pincode,
         delivery_summary: record?.delivery_summary,
         order_amount: record?.order_amount,
         payment_method: record?.payment_method,

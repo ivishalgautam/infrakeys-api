@@ -34,6 +34,10 @@ const init = async (sequelize) => {
         type: DataTypes.ENUM("pending", "in_transit", "delivered", "quotation"),
         defaultValue: "pending",
       },
+      pincode: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       delivery_summary: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -71,6 +75,7 @@ const create = async ({ data }) => {
     {
       id: data?.order_id,
       user_id: data?.user_id,
+      pincode: data?.pincode,
       delivery_summary: data?.delivery_summary,
       order_amount: data?.order_amount,
       payment_method: data?.payment_method,

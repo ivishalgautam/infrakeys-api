@@ -26,7 +26,7 @@ const verifyToken = async (req, res) => {
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
-    res.code(401).send({ message: "unauthorized!" });
+    return res.code(401).send({ message: "unauthorized!" });
   }
 
   const token = authHeader.split(" ")[1];

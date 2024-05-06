@@ -184,7 +184,8 @@ const getById = async (id) => {
           'delivered_percentage', ei.delivered_percentage,
           'base_rate', ei.base_rate,
           'gst_percentage', ei.gst_percentage,
-          'total_amount', ei.total_amount
+          'total_amount', ei.total_amount,
+          'filters', ei.filters
         ))as items
       FROM enquiries enq
       LEFT JOIN enquiry_items ei ON ei.enquiry_id = enq.id
