@@ -155,7 +155,7 @@ const getBySlug = async (req, slug) => {
       cat.*,
       JSON_AGG(subcat.*) as top_sub_categories
     FROM categories as cat
-    LEFT JOIN sub_categories subcat on cat.id = subcat.category_id AND subcat.is_featured = true
+    LEFT JOIN sub_categories subcat on cat.id = subcat.category_id
     WHERE cat.slug = '${req.params.slug || slug}'
     GROUP BY cat.id
   `;
