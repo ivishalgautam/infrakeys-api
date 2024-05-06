@@ -332,7 +332,7 @@ const searchProducts = async (req) => {
         FROM unnest(p.tags) AS tag 
         WHERE tag ILIKE '%${q}%'
       ))
-      AND prd.status = 'published'
+      AND p.status = 'published'
   `;
 
   // Fetch templates and categories based on the search term
