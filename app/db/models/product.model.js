@@ -288,7 +288,7 @@ const getBySubCategory = async (req, slug) => {
       products prd
       LEFT JOIN sub_categories subcat ON prd.sub_category_id = subcat.id
       LEFT JOIN categories cat ON cat.id = subcat.category_id
-      WHERE subcat.slug = '${slug}'
+      WHERE subcat.slug = '${slug}' AND prd.status = 'published'
       ${threshold}
   `;
 
@@ -326,12 +326,13 @@ const searchProducts = async (req) => {
       p.id, p.title, p.slug, p.tags
     FROM products AS p
     WHERE 
-      p.title ILIKE '%${q}%' 
+      (p.title ILIKE '%${q}%' 
       OR EXISTS (
         SELECT 1 
         FROM unnest(p.tags) AS tag 
         WHERE tag ILIKE '%${q}%'
-      )
+      ))
+      AND prd.status = 'published'
   `;
 
   // Fetch templates and categories based on the search term
