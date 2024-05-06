@@ -90,38 +90,13 @@ const get = async (req) => {
     whereConditions.push(`prd.is_featured = true`);
   }
 
-  // const part = req.query.part;
-  const categories = req.query.categories;
-  const brands = req.query.brands;
-
-  if (categories) {
-    const categorySlugs = categories.split("_");
-    const categoryPlaceholders = categorySlugs
-      .map((_, index) => `:category${index}`)
-      .join(", ");
-    whereConditions.push(`cat.slug IN (${categoryPlaceholders})`);
-    categorySlugs.forEach((slug, index) => {
-      queryParams[`category${index}`] = slug;
-    });
-  }
-  if (brands) {
-    const brandSlugs = brands.split("_");
-    const brandPlaceholders = brandSlugs
-      .map((_, index) => `:brand${index}`)
-      .join(", ");
-    whereConditions.push(`brd.slug IN (${brandPlaceholders})`);
-    brandSlugs.forEach((slug, index) => {
-      queryParams[`brand${index}`] = slug;
-    });
-  }
-
   let whereClause = "";
   if (whereConditions.length > 0) {
     whereClause = "WHERE " + whereConditions.join(" AND ");
   }
 
   const page = req.query.page ? Math.max(1, parseInt(req.query.page)) : 1;
-  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 9999999;
   const offset = (page - 1) * limit;
 
   const query = `
@@ -139,9 +114,7 @@ const get = async (req) => {
     ORDER BY prd.updated_at DESC
     LIMIT :limit OFFSET :offset;
   `;
-
-  console.log(query);
-
+  // console.log(query);
   const products = await ProductModel.sequelize.query(query, {
     replacements: { ...queryParams, limit, offset },
     type: QueryTypes.SELECT,
