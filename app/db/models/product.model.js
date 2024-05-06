@@ -136,7 +136,7 @@ const get = async (req) => {
 
   return {
     data: products,
-    total_page: Math.ceil(Number(total) / Number(limit)),
+    // total_page: Math.ceil(Number(total) / Number(limit)),
     page: page,
   };
 };
