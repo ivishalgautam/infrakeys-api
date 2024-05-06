@@ -95,6 +95,7 @@ const get = async (req) => {
     whereClause = "WHERE " + whereConditions.join(" AND ");
   }
 
+  const q = req.query?.q?.split("-").join(" ");
   const page = req.query.page ? Math.max(1, parseInt(req.query.page)) : 1;
   const limit = req.query.limit ? parseInt(req.query.limit) : 9999999;
   const offset = (page - 1) * limit;
@@ -112,11 +113,10 @@ const get = async (req) => {
       LEFT JOIN categories cat ON cat.id = sc.category_id
     ${whereClause}
     ORDER BY prd.updated_at DESC
-    LIMIT :limit OFFSET :offset;
   `;
   // console.log(query);
   const products = await ProductModel.sequelize.query(query, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
