@@ -196,7 +196,7 @@ const countOrderStats = async () => {
         sequelizeFwk.fn("DATE_TRUNC", "month", sequelizeFwk.col("created_at")),
         "date",
       ],
-      [sequelizeFwk.fn("COUNT", sequelizeFwk.col("id")), "order"],
+      [sequelizeFwk.fn("COUNT", sequelizeFwk.col("id")), "Orders"],
     ],
     where: {
       created_at: {
