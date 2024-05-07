@@ -82,10 +82,6 @@ const get = async (req) => {
     whereConditions.push("cat.is_featured = true");
   }
 
-  const page = req.query.page ? Math.max(1, req.query.page) : 1;
-  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-  const offset = (page - 1) * limit;
-
   if (whereConditions.length > 0) {
     whereClause = `WHERE ${whereConditions.join(" AND ")}`;
   }
@@ -105,11 +101,10 @@ const get = async (req) => {
       LEFT JOIN sub_categories subcat ON subcat.category_id = cat.id
     ${whereClause}
     GROUP BY cat.id
-    LIMIT :limit OFFSET :offset
   `;
 
   const [rows] = await CategoryModel.sequelize.query(query, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     raw: true,
   });
 
