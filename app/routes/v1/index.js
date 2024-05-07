@@ -12,6 +12,7 @@ import enquiryRoutes from "../../api/enquiry/routes.js";
 import cartRoutes from "../../api/cart/routes.js";
 import queryRoutes from "../../api/query/routes.js";
 import pointsRoutes from "../../api/points/routes.js";
+import dashboardRoutes from "../../api/dashboard/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -28,4 +29,5 @@ export default async function routes(fastify, options) {
   fastify.register(cartRoutes, { prefix: "carts" });
   fastify.register(queryRoutes, { prefix: "queries" });
   fastify.register(pointsRoutes, { prefix: "points" });
+  fastify.register(dashboardRoutes, { prefix: "dashboard" });
 }

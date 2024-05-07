@@ -1,6 +1,7 @@
 "use strict";
+import moment from "moment";
 import constants from "../../lib/constants/index.js";
-import { DataTypes, Deferrable, QueryTypes } from "sequelize";
+import { DataTypes, Deferrable, Op, QueryTypes } from "sequelize";
 
 let ProductModel = null;
 
@@ -317,6 +318,42 @@ const deleteById = async (req, id) => {
   });
 };
 
+const countProducts = async (last_30_days = false) => {
+  let whereClause = {};
+  if (last_30_days) {
+    whereClause = {
+      created_at: {
+        [Op.gte]: moment().subtract(30, "days").toDate(),
+      },
+    };
+  }
+
+  const conditions = [
+    { status: "published" },
+    { status: "draft" },
+    { status: "pending" },
+  ];
+
+  const results = await Promise.all(
+    conditions.map(async (condition) => {
+      const count = await ProductModel.count({
+        where: {
+          ...whereClause,
+          ...condition,
+        },
+      });
+      return {
+        [condition.status]: count.toString(),
+      };
+    })
+  );
+
+  const resultObj = {};
+
+  results.forEach((item) => Object.assign(resultObj, item));
+  return resultObj;
+};
+
 const searchProducts = async (req) => {
   const q = req.query.q.split("-").join(" ");
   if (!q) return [];
@@ -353,4 +390,5 @@ export default {
   getByCategory: getByCategory,
   getBySubCategory: getBySubCategory,
   searchProducts: searchProducts,
+  countProducts: countProducts,
 };

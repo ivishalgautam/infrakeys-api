@@ -1,6 +1,6 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk from "sequelize";
+import sequelizeFwk, { Op } from "sequelize";
 
 const { DataTypes, QueryTypes, Deferrable } = sequelizeFwk;
 
@@ -208,6 +208,40 @@ const deleteById = async (req, id) => {
   });
 };
 
+const countEnquiries = async (last_30_days = false) => {
+  return await EnquiryModel.findAll({
+    attributes: [
+      [
+        EnquiryModel.sequelize.fn("COUNT", EnquiryModel.sequelize.col("id")),
+        "total_enquiries",
+      ],
+    ],
+    plain: true,
+    raw: true,
+  });
+};
+
+const countEnquiriesStats = async () => {
+  return await EnquiryModel.findAll({
+    attributes: [
+      [
+        sequelizeFwk.fn("DATE_TRUNC", "month", sequelizeFwk.col("created_at")),
+        "date",
+      ],
+      [sequelizeFwk.fn("COUNT", sequelizeFwk.col("id")), "enquiry"],
+    ],
+    where: {
+      created_at: {
+        [Op.gte]: sequelizeFwk.literal("CURRENT_DATE - INTERVAL '12 months'"),
+      },
+    },
+    group: [
+      sequelizeFwk.fn("DATE_TRUNC", "month", sequelizeFwk.col("created_at")),
+    ],
+    raw: true,
+  });
+};
+
 export default {
   init: init,
   create: create,
@@ -215,4 +249,6 @@ export default {
   update: update,
   getById: getById,
   deleteById: deleteById,
+  countEnquiries: countEnquiries,
+  countEnquiriesStats: countEnquiriesStats,
 };
