@@ -94,7 +94,6 @@ const get = async (req) => {
         FROM sub_categories sc
         WHERE sc.category_id = cat.id
       ) AS total_sub_categories,
-      CEIL((SELECT COUNT(c.id) FROM categories c) / :limit) AS total_pages,
       JSON_AGG(subcat.*) as sub_categories
     FROM
       categories cat
