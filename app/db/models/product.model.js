@@ -362,13 +362,15 @@ const searchProducts = async (req) => {
     SELECT
       p.id, p.title, p.slug, p.tags
     FROM products AS p
+    LEFT JOIN sub_categories subcat ON subcat.id = p.sub_category_id
+    LEFT JOIN categories cat ON cat.id = subcat.category_id
     WHERE 
       (p.title ILIKE '%${q}%' 
       OR EXISTS (
         SELECT 1 
         FROM unnest(p.tags) AS tag 
         WHERE tag ILIKE '%${q}%'
-      ))
+      ) OR subcat.name ILIKE '%${q}%' OR cat.name ILIKE '%${q}%')
       AND p.status = 'published'
   `;
 
