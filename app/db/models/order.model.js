@@ -153,7 +153,8 @@ const getById = async (id) => {
         'product_slug', prd.slug,
         'base_rate', oi.base_rate,
         'gst_percentage', oi.gst_percentage,
-        'total_amount', oi.total_amount
+        'total_amount', oi.total_amount,
+        'filters', oi.filters
       )) as items
     FROM orders o
     LEFT JOIN order_items oi ON oi.order_id = o.id
