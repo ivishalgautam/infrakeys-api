@@ -99,8 +99,8 @@ const get = async (req) => {
       categories cat
       LEFT JOIN sub_categories subcat ON subcat.category_id = cat.id
     ${whereClause}
-    ORDER BY cat.created_at
     GROUP BY cat.id
+    ORDER BY cat.created_at
   `;
 
   const [rows] = await CategoryModel.sequelize.query(query, {
