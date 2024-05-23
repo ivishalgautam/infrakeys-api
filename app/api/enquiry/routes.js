@@ -13,4 +13,5 @@ export default async function routes(fastify, options) {
     controller.deleteEnquiryItemById
   );
   fastify.post("/convertToOrder/:id", {}, controller.convertToOrder);
+  fastify.post("/whatsapp/:product_id", {}, controller.sendEnquiryToWhatsApp);
 }

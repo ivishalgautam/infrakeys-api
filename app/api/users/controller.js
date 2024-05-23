@@ -145,9 +145,7 @@ const checkUsername = async (req, res) => {
         message: "username already exists try with different username",
       });
     }
-    return res.send({
-      status: true,
-    });
+    return res.send({ status: true });
   } catch (error) {
     console.error(error);
     return res.code(500).send({ status: false, message: error.message, error });
@@ -185,6 +183,7 @@ const resetPassword = async (req, res) => {
     return res.code(500).send({ status: false, message: error.message, error });
   }
 };
+
 export default {
   create: create,
   update: update,
