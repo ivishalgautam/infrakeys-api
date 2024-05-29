@@ -150,6 +150,7 @@ const getByPhone = async (req, record = undefined) => {
     where: {
       phone: req?.body?.phone || record?.user?.phone,
     },
+    raw: true,
     attributes: [
       "id",
       "username",

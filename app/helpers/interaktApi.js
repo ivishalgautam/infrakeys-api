@@ -26,5 +26,6 @@ export async function sendOtp({ country_code = "+91", phone, name, otp }) {
   };
 
   const resp = await axios(configs);
+  console.log(resp.data);
   return resp;
 }

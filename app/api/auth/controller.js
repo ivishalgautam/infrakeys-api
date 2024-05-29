@@ -83,9 +83,9 @@ const verifyCustomer = async (req, res) => {
         .code(400)
         .send({ message: "Please contact administrator for login!" });
 
-    // const otp = crypto.randomInt(100000, 999999);
-    const otp = 111111;
-    console.log({ otp });
+    const otp = crypto.randomInt(100000, 999999);
+    // const otp = 111111;
+    // console.log({ otp });
 
     if (record) {
       await table.OtpModel.create({
@@ -93,7 +93,7 @@ const verifyCustomer = async (req, res) => {
         otp: otp,
       });
 
-      // await sendOtp({ name: record?.phone, phone: record.phone, otp });
+      await sendOtp({ name: record?.phone, phone: record.phone, otp });
     }
 
     return res.send({ status: true, message: "Otp sent." });
@@ -112,15 +112,17 @@ const createNewCustomer = async (req, res) => {
     }
 
     const userData = await table.UserModel.createCustomer(req);
-    // const otp = crypto.randomInt(100000, 999999);
-    const otp = 111111;
-    console.log({ otp });
+    const otp = crypto.randomInt(100000, 999999);
+    // const otp = 111111;
+    // console.log({ otp });
 
     if (userData) {
       await table.OtpModel.create({
         user_id: userData.id,
         otp: otp,
       });
+
+      await sendOtp({ name: record?.phone, phone: record.phone, otp });
     }
 
     return res.send({ status: true });
@@ -136,35 +138,16 @@ const verifyRefreshToken = async (req, res) => {
 
 const createOtp = async (req, res) => {
   try {
-    const user = await table.UserModel.getById(
-      req,
-      req.user_data?.id || req.decoded.user.id
-    );
+    const user = await table.UserModel.getByPhone(req);
     const otp = crypto.randomInt(100000, 999999);
     const record = await table.OtpModel.getByUserId(user?.id);
 
-    // const resp = await sendOtp({
-    //   country_code: user.country_code,
-    //   fullname: user.fullname,
-    //   mobile_number: user.mobile_number,
-    //   otp: otp,
-    // });
-
-    console.log({ otp });
-
-    // ! remove true
-    if (true) {
-      if (record) {
-        await table.OtpModel.update({
-          user_id: req.user_data?.id || req.decoded.user.id,
-          otp: otp,
-        });
-      } else {
-        await table.OtpModel.create({
-          user_id: req.user_data?.id || req.decoded.user.id,
-          otp: otp,
-        });
-      }
+    if (record) {
+      await table.OtpModel.update({ user_id: user?.id, otp: otp });
+      await sendOtp({ name: user?.name, phone: user.phone, otp });
+    } else {
+      await table.OtpModel.create({ user_id: user?.id, otp: otp });
+      await sendOtp({ name: user?.name, phone: user.phone, otp });
     }
 
     res.send({ status: true, message: "Otp sent" });
@@ -177,7 +160,6 @@ const createOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const user = await table.UserModel.getByPhone(req);
-
     const record = await table.OtpModel.getByUserId(user.id);
 
     if (!record) {
