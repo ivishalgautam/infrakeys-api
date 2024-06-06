@@ -50,7 +50,7 @@ const init = async (sequelize) => {
         type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: [],
       },
-      meta_title: { type: DataTypes.STRING, allowNull: true },
+      meta_title: { type: DataTypes.TEXT, allowNull: true },
       meta_description: { type: DataTypes.TEXT, allowNull: true },
       meta_keywords: { type: DataTypes.TEXT, allowNull: true },
     },

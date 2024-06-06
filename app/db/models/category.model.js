@@ -38,15 +38,15 @@ const init = async (sequelize) => {
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
       meta_title: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       meta_description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       meta_keywords: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
     },
