@@ -15,6 +15,7 @@ import subCategoryModel from "./models/sub-category.model.js";
 import industriesModel from "./models/industries.model.js";
 import subCatTypeModel from "./models/sub_category_type.model.js";
 import pointsModel from "./models/points.model.js";
+import blogModel from "./models/blog.model.js";
 
 export default {
   UserModel: userModel,
@@ -33,4 +34,5 @@ export default {
   OtpModel: otpModel,
   BannerModel: bannerModel,
   PointsModel: pointsModel,
+  BlogModel: blogModel,
 };
