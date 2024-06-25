@@ -2,14 +2,6 @@
 
 import table from "../../db/models.js";
 import hash from "../../lib/encryption/index.js";
-import ejs from "ejs";
-import fs from "fs";
-import path from "path";
-import { sendCredentials } from "../../helpers/mailer.js";
-import { fileURLToPath } from "url";
-import authToken from "../../helpers/auth.js";
-import crypto from "crypto";
-import { sendOtp } from "../../helpers/interaktApi.js";
 
 const create = async (req, res) => {
   let record;

@@ -93,7 +93,7 @@ const verifyCustomer = async (req, res) => {
         otp: otp,
       });
 
-      await sendOtp({ name: record?.phone, phone: record.phone, otp });
+      await sendOtp({ name: record?.name, phone: record.phone, otp });
     }
 
     return res.send({ status: true, message: "Otp sent." });
