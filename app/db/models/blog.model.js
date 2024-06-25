@@ -55,6 +55,10 @@ const init = async (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      faq: {
+        type: DataTypes.JSONB,
+        defaultValue: "[]",
+      },
     },
     {
       createdAt: "created_at",
@@ -78,6 +82,7 @@ const create = async (req) => {
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
+      faq: req.body.faq,
     },
     { returning: true, raw: true }
   );
@@ -138,6 +143,7 @@ const update = async (req, id) => {
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
+      faq: req.body.faq,
     },
     {
       where: {
@@ -208,8 +214,6 @@ const getRelatedBlogs = async (req, id) => {
         JOIN unnest(b2.categories) AS cat2 ON cat1 = cat2
       ) > 0;
   `;
-
-  console.log(query);
 
   return await BlogModel.sequelize.query(query, {
     type: QueryTypes.SELECT,

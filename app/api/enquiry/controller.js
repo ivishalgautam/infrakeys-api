@@ -10,7 +10,6 @@ import { updatedEnquiryItems } from "../../helpers/enquiry-item.js";
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = constants.http.status;
 
 const create = async (req, res) => {
-  console.log(req.body);
   try {
     const enquiryId = generateEnquiryId(req.body.enquiry_type);
 
@@ -282,7 +281,6 @@ const sendEnquiryToWhatsApp = async (req, res) => {
       return res
         .code(NOT_FOUND)
         .send({ status: false, message: "Product not found!" });
-        
   } catch (error) {
     console.error(error);
     res
