@@ -5,6 +5,10 @@ import config from "../config/index.js";
 
 export async function sendOtp({ country_code = "+91", phone, name, otp }) {
   console.log({ phone, name, otp });
+  console.log({
+    template_name: config.interakt_template_name,
+    api_key: config.interakt_api_key,
+  });
   let configs = {
     method: "post",
     maxBodyLength: Infinity,
