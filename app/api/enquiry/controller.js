@@ -268,10 +268,6 @@ const deleteEnquiryItemById = async (req, res) => {
 
 const sendEnquiryToWhatsApp = async (req, res) => {
   try {
-    const user = await table.UserModel.getById(null, req.user_data.id);
-    if (!user)
-      return res.code(401).send({ status: false, message: "unauthorized!" });
-
     const product = await table.ProductModel.getById(
       req,
       req.params.product_id
@@ -281,6 +277,8 @@ const sendEnquiryToWhatsApp = async (req, res) => {
       return res
         .code(NOT_FOUND)
         .send({ status: false, message: "Product not found!" });
+
+    console.log(product);
   } catch (error) {
     console.error(error);
     res

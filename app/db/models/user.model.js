@@ -86,11 +86,14 @@ const create = async (req) => {
 };
 
 const createCustomer = async (req) => {
-  return await UserModel.create({
-    name: req.body?.name,
-    phone: req.body?.phone,
-    email: req.body?.email,
-  });
+  return await UserModel.create(
+    {
+      name: req.body?.name,
+      phone: req.body?.phone,
+      email: req.body?.email,
+    },
+    { returning: true, raw: true }
+  );
 };
 
 const get = async (req) => {

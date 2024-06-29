@@ -104,9 +104,11 @@ const verifyCustomer = async (req, res) => {
 };
 
 const createNewCustomer = async (req, res) => {
+  console.log(req.body);
+
   try {
     const record = await table.UserModel.getByPhone(req);
-
+    console.log({ record });
     if (record) {
       return res.code(400).send({ message: "Customer exist!" });
     }
@@ -122,7 +124,7 @@ const createNewCustomer = async (req, res) => {
         otp: otp,
       });
 
-      await sendOtp({ name: record?.phone, phone: record.phone, otp });
+      await sendOtp({ name: userData?.phone, phone: userData.phone, otp });
     }
 
     return res.send({ status: true });
