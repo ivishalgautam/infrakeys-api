@@ -25,6 +25,7 @@ const config = {
   // interakt
   interakt_api_key: process.env.INTERACT_API_KEY,
   interakt_template_name: process.env.INTERACT_TEMPLATE_NAME,
+  interakt_enq_template_name: process.env.INTERACT_ENQUIRY_TEMPLATE_NAME,
 };
 
 export default config;

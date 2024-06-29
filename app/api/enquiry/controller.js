@@ -6,8 +6,9 @@ import {
   generateOrderId,
 } from "../../helpers/generateId.js";
 import { updatedEnquiryItems } from "../../helpers/enquiry-item.js";
+import { sendEnquiry } from "../../helpers/interaktApi.js";
 
-const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = constants.http.status;
+const { INTERNAL_SERVER_ERROR, NOT_FOUND } = constants.http.status;
 
 const create = async (req, res) => {
   try {
@@ -268,6 +269,11 @@ const deleteEnquiryItemById = async (req, res) => {
 
 const sendEnquiryToWhatsApp = async (req, res) => {
   try {
+    const customer = await table.UserModel.getById(req, req.user_data.id);
+
+    if (!customer)
+      return res.code(401).send({ status: false, message: "unauthorized" });
+
     const product = await table.ProductModel.getById(
       req,
       req.params.product_id
@@ -279,6 +285,17 @@ const sendEnquiryToWhatsApp = async (req, res) => {
         .send({ status: false, message: "Product not found!" });
 
     console.log(product);
+
+    sendEnquiry({
+      adminPhone: "7011691802",
+      customerName:
+        String(customer.name).charAt(0).toUpperCase() +
+        String(customer.name).slice(1),
+      productName: String(product.title).toUpperCase(),
+      enquiryFor: String(req.body.enqFor).toUpperCase(),
+    });
+
+    res.send({ message: "Enquiry sent on whatsapp." });
   } catch (error) {
     console.error(error);
     res

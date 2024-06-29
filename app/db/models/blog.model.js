@@ -35,7 +35,7 @@ const init = async (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      is_featured: {
+      is_active: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
@@ -77,7 +77,7 @@ const create = async (req) => {
       image: req.body.image,
       short_description: req.body.short_description,
       content: req.body.content,
-      is_featured: req.body.is_featured,
+      is_active: req.body.is_active,
       categories: req.body.categories,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
@@ -93,7 +93,7 @@ const get = async (req) => {
   const queryParams = {};
 
   if (req.query.featured) {
-    whereConditions.push("b.is_featured = true");
+    whereConditions.push("b.is_active = true");
   }
 
   let whereClause = "";
@@ -139,7 +139,7 @@ const update = async (req, id) => {
       short_description: req.body.short_description,
       categories: req.body.categories,
       content: req.body.content,
-      is_featured: req.body.is_featured,
+      is_active: req.body.is_active,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,

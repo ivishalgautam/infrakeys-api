@@ -108,7 +108,6 @@ const createNewCustomer = async (req, res) => {
 
   try {
     const record = await table.UserModel.getByPhone(req);
-    console.log({ record });
     if (record) {
       return res.code(400).send({ message: "Customer exist!" });
     }
