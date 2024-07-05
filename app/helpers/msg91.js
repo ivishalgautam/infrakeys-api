@@ -5,13 +5,13 @@ export const sendMsg91OTP = async () => {
     method: "POST",
     url: "https://control.msg91.com/api/v5/flow",
     headers: {
-      authkey: "425680Ap11EHcbjbZ668684ebP1",
+      authkey: process.env.MSG91_AUTH_KEY,
       accept: "application/json",
       "content-type": "application/json",
     },
     data: JSON.stringify({
-      template_id: "668659d8d6fc054a2f54bc92",
-      mobiles: "917011691802",
+      template_id: process.env.MSG91_TEMPLATE_ID,
+      mobiles: process.env.MSG91_MOBILE,
       VAR1: "vishal",
       VAR2: "123456",
     }),

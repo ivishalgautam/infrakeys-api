@@ -8,7 +8,6 @@ import crypto from "crypto";
 import { sendOtp } from "../../helpers/interaktApi.js";
 import moment from "moment";
 import { sendMsg91OTP } from "../../helpers/msg91.js";
-import { sendFast2SmsOtp, sendSarvOtp } from "../../helpers/otp.js";
 
 const verifyUserCredentials = async (req, res) => {
   let userData;
