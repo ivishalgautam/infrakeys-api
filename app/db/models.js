@@ -16,6 +16,7 @@ import industriesModel from "./models/industries.model.js";
 import subCatTypeModel from "./models/sub_category_type.model.js";
 import pointsModel from "./models/points.model.js";
 import blogModel from "./models/blog.model.js";
+import applyCreditModel from "./models/apply-credit.model.js";
 
 export default {
   UserModel: userModel,
@@ -35,4 +36,5 @@ export default {
   BannerModel: bannerModel,
   PointsModel: pointsModel,
   BlogModel: blogModel,
+  ApplyCreditModel: applyCreditModel,
 };

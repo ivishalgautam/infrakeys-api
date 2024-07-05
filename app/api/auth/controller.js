@@ -7,6 +7,9 @@ import authToken from "../../helpers/auth.js";
 import crypto from "crypto";
 import { sendOtp } from "../../helpers/interaktApi.js";
 import moment from "moment";
+import { sendTwilioOTP } from "../../helpers/twilio.js";
+import { sendMsg91OTP } from "../../helpers/msg91.js";
+import { sendFast2SmsOtp, sendSarvOtp } from "../../helpers/otp.js";
 
 const verifyUserCredentials = async (req, res) => {
   let userData;
@@ -94,6 +97,10 @@ const verifyCustomer = async (req, res) => {
       });
 
       await sendOtp({ name: record?.name, phone: record.phone, otp });
+      // await sendTwilioOTP({ phone: record.phone, name: record.name, otp });
+      // await sendMsg91OTP();
+      // await sendFast2SmsOtp();
+      // await sendSarvOtp();
     }
 
     return res.send({ status: true, message: "Otp sent." });

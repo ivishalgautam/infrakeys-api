@@ -14,6 +14,7 @@ import queryRoutes from "../../api/query/routes.js";
 import pointsRoutes from "../../api/points/routes.js";
 import dashboardRoutes from "../../api/dashboard/routes.js";
 import blogRoutes from "../../api/blog/routes.js";
+import creditApplies from "../../api/apply-credit/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -32,4 +33,5 @@ export default async function routes(fastify, options) {
   fastify.register(pointsRoutes, { prefix: "points" });
   fastify.register(dashboardRoutes, { prefix: "dashboard" });
   fastify.register(blogRoutes, { prefix: "blogs" });
+  fastify.register(creditApplies, { prefix: "credit-applies" });
 }
