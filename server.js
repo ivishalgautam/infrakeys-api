@@ -22,7 +22,6 @@ import queryController from "./app/api/query/controller.js";
 import userController from "./app/api/users/controller.js";
 import blogController from "./app/api/blog/controller.js";
 import { querySchema } from "./app/api/query/routes.js";
-import { sendTwilioOTP } from "./app/helpers/twilio.js";
 /*
   Register External packages, routes, database connection
 */
@@ -88,7 +87,6 @@ export default (app) => {
 
   // banner
   app.get("/v1/banners", {}, bannerController.get);
-  app.get("/send-otp", {}, sendTwilioOTP);
 
   // query
   app.post("/v1/queries", querySchema, queryController.create);
