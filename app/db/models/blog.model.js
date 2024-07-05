@@ -118,6 +118,7 @@ const get = async (req) => {
       ${constants.models.BLOG_TABLE} b
       LEFT JOIN categories cat ON cat.id = ANY(b.categories)
       ${whereClause}
+      ORDER BY b.created_at DESC
       GROUP BY
         b.id
   `;
@@ -125,7 +126,6 @@ const get = async (req) => {
   return await BlogModel.sequelize.query(query, {
     replacements: {},
     type: QueryTypes.SELECT,
-    order: [["created_at", "DESC"]],
     raw: true,
   });
 };
