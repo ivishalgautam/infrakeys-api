@@ -105,15 +105,9 @@ const get = async (req) => {
       prd.id,
       prd.title,
       prd.slug,
-      prd.custom_properties,
-      sc.name AS sub_category_name,
-      sc.slug AS sub_category_slug,
-      cat.name AS category_name,
-      cat.slug AS category_slug
+      prd.custom_properties
     FROM
       products prd
-      LEFT JOIN sub_categories sc ON sc.id = prd.sub_category_id
-      LEFT JOIN categories cat ON cat.id = sc.category_id
     ${whereClause}
     ORDER BY prd.updated_at DESC
     `;
