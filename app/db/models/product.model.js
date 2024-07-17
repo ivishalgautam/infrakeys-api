@@ -102,7 +102,10 @@ const get = async (req) => {
 
   const query = `
     SELECT
-      prd.*,
+      prd.id,
+      prd.title,
+      prd.slug,
+      prd.custom_properties,
       sc.name AS sub_category_name,
       sc.slug AS sub_category_slug,
       cat.name AS category_name,
