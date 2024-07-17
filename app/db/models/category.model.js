@@ -88,7 +88,11 @@ const get = async (req) => {
 
   let query = `
   SELECT
-      cat.*,
+      cat.id,
+      cat.name,
+      cat.slug,
+      cat.image,
+      cat.is_featured,
       (
         SELECT COUNT(sc.id)
         FROM sub_categories sc
