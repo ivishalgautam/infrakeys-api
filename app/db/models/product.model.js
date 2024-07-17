@@ -234,7 +234,10 @@ const getByCategory = async (req, slug) => {
 
   let query = `
     SELECT
-      prd.*,
+      prd.id,
+      prd.title,
+      prd.slug,
+      prd.custom_properties,
       cat.name AS category_name,
       cat.slug AS category_slug
     FROM
