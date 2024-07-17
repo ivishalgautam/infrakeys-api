@@ -103,7 +103,16 @@ const get = async (req) => {
 
   let query = `
   SELECT 
-      b.*,
+      json_agg(
+        json_build_object(
+          'id', b.id,
+          'title', b.title,
+          'slug', b.slug,
+          'short_description', b.short_description,
+          'created_at', b.created_at,
+          'updated_at', b.updated_at
+        )
+      ),
       CASE
           WHEN COUNT(cat.id) > 0 THEN json_agg(
               json_build_object(
