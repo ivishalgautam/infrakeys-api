@@ -105,6 +105,7 @@ const get = async (req) => {
   SELECT 
       b.id,
       b.title,
+      b.image,
       b.slug,
       b.short_description,
       b.created_at,
