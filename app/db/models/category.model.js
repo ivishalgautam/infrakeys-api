@@ -99,9 +99,11 @@ const get = async (req) => {
         WHERE sc.category_id = cat.id
       ) AS total_sub_categories,
       JSON_AGG(
-        'id', subcat.id,
-        'name', subcat.name,
-        'slug', subcat.slug
+        JSON_BUILD_OBJECT(
+          'id', subcat.id,
+          'name', subcat.name,
+          'slug', subcat.slug
+          )
       ) as sub_categories
     FROM
       categories cat
