@@ -106,6 +106,7 @@ const get = async (req) => {
       prd.title,
       prd.slug,
       prd.custom_properties,
+      prd.status,
       sc.name AS sub_category_name,
       sc.slug AS sub_category_slug,
       cat.name AS category_name,
