@@ -96,7 +96,7 @@ const verifyCustomer = async (req, res) => {
 
       await sendOtp({ name: record?.name, phone: record.phone, otp });
       // await sendTwilioOTP({ phone: record.phone, name: record.name, otp });
-      // await sendMsg91OTP();
+      await sendMsg91OTP();
       // await sendFast2SmsOtp();
       // await sendSarvOtp();
     }

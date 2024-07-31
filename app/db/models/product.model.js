@@ -105,9 +105,15 @@ const get = async (req) => {
       prd.id,
       prd.title,
       prd.slug,
-      prd.custom_properties
+      prd.custom_properties,
+      sc.name AS sub_category_name,
+      sc.slug AS sub_category_slug,
+      cat.name AS category_name,
+      cat.slug AS category_slug
     FROM
-      products prd
+      ${constants.models.PRODUCT_TABLE} prd
+      LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} sc ON sc.id = prd.sub_category_id
+      LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sc.category_id
     ${whereClause}
     ORDER BY prd.updated_at DESC
     `;
