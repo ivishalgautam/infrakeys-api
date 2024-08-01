@@ -59,6 +59,7 @@ const constants = {
     QUERY_TABLE: "queries",
     OTP_TABLE: "otps",
     POINTS_TABLE: "points",
+    REQUIREMENT_TABLE: "requirements",
     APPLY_CREDIT_TABLE: "apply_for_credits",
   },
   bcrypt: {

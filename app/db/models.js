@@ -17,6 +17,7 @@ import subCatTypeModel from "./models/sub_category_type.model.js";
 import pointsModel from "./models/points.model.js";
 import blogModel from "./models/blog.model.js";
 import applyCreditModel from "./models/apply-credit.model.js";
+import requirementsModel from "./models/requirements.model.js";
 
 export default {
   UserModel: userModel,
@@ -37,4 +38,5 @@ export default {
   PointsModel: pointsModel,
   BlogModel: blogModel,
   ApplyCreditModel: applyCreditModel,
+  RequirementsModel: requirementsModel,
 };

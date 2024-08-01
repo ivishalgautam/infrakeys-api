@@ -69,7 +69,7 @@ const getFile = async (req, res) => {
   const currentDirPath = dirname(currentFilePath);
   const publicPath = path.join(
     currentDirPath,
-    "../../../public",
+    "../../../",
     req.query.file_path
   );
 
@@ -108,7 +108,7 @@ const getFile = async (req, res) => {
 
   try {
     const filePath = await fs.readFileSync(publicPath);
-    return res.send({ status: true, data: filePath });
+    return res.send(filePath);
   } catch (error) {
     console.error({ error });
   }
@@ -126,7 +126,7 @@ const deleteFile = async (req, res) => {
     const currentDirPath = dirname(currentFilePath);
     const publicPath = path.join(
       currentDirPath,
-      "../../..",
+      "../../../",
       req.query.file_path
     );
     if (fs.existsSync(publicPath)) {
