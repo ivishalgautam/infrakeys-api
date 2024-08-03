@@ -84,9 +84,9 @@ const verifyCustomer = async (req, res) => {
         .code(400)
         .send({ message: "Please contact administrator for login!" });
 
-    const otp = crypto.randomInt(100000, 999999);
-    // const otp = 111111;
-    // console.log({ otp });
+    // const otp = crypto.randomInt(100000, 999999);
+    const otp = 111111;
+    console.log({ otp });
 
     if (record) {
       await table.OtpModel.create({
@@ -118,9 +118,9 @@ const createNewCustomer = async (req, res) => {
     }
 
     const userData = await table.UserModel.createCustomer(req);
-    const otp = crypto.randomInt(100000, 999999);
-    // const otp = 111111;
-    // console.log({ otp });
+    // const otp = crypto.randomInt(100000, 999999);
+    const otp = 111111;
+    console.log({ otp });
 
     if (userData) {
       await table.OtpModel.create({
