@@ -38,6 +38,10 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      category_ids: {
+        type: DataTypes.ARRAY(DataTypes.UUID),
+        defaultValue: [],
+      },
       type: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -77,7 +81,7 @@ const create = async (req) => {
     image: req.body?.image,
     slug: req.body?.slug,
     is_featured: req.body?.is_featured,
-    category_id: req.body?.category_id,
+    category_ids: req.body?.category_ids,
     type: req.body?.type,
     meta_title: req.body?.meta_title,
     meta_description: req.body?.meta_description,
@@ -89,8 +93,8 @@ const get = async (req) => {
   let whereConditions = [];
   const queryParams = {};
 
-  if (req.query.featured) {
-    whereConditions.push(`sc.is_featured = true`);
+  if (req?.query?.featured) {
+    whereConditions.push(`subcat.is_featured = true`);
   }
 
   let whereClause = "";
@@ -100,13 +104,22 @@ const get = async (req) => {
 
   const query = `
     SELECT
-        sc.*,
-        cat.id as category_id,
-        cat.name as category_name,
-        cat.slug as category_slug
-      FROM sub_categories sc
-      LEFT JOIN categories cat ON cat.id = sc.category_id
+        subcat.*,
+        JSON_AGG(
+          CASE
+            WHEN subcat.id IS NOT NULL THEN
+              JSON_BUILD_OBJECT(
+                'id', cat.id,
+                'name', cat.name,
+                'slug', cat.slug
+              )
+            END
+        ) as categories
+      FROM sub_categories subcat
+      LEFT JOIN categories cat ON cat.id = ANY(subcat.category_ids)
       ${whereClause}
+      GROUP BY
+       subcat.id
   `;
 
   return await SubCategoryModel.sequelize.query(query, {
@@ -116,6 +129,18 @@ const get = async (req) => {
   });
 };
 
+const updateCategoryIds = async (req, id) => {
+  let query = `
+  UPDATE ${constants.models.SUB_CATEGORY_TABLE} SET category_ids = ARRAY[category_id];
+  `;
+
+  const [rowCount, rows] = await SubCategoryModel.sequelize.query(query, {
+    type: QueryTypes.UPDATE,
+  });
+
+  return rows[0];
+};
+
 const update = async (req, id) => {
   const [rowCount, rows] = await SubCategoryModel.update(
     {
@@ -123,7 +148,7 @@ const update = async (req, id) => {
       image: req.body?.image,
       slug: req.body?.slug,
       is_featured: req.body?.is_featured,
-      category_id: req.body?.category_id,
+      category_ids: req.body?.category_ids,
       type: req.body?.type,
       meta_title: req.body?.meta_title,
       meta_description: req.body?.meta_description,
@@ -194,7 +219,7 @@ const getByCategory = async (req, slug) => {
     FROM
         sub_categories sc
     LEFT JOIN
-        categories cat ON cat.id = sc.category_id
+        categories cat ON cat.id = ANY(sc.category_ids)
     LEFT JOIN
         sub_category_types sct ON sct.id = sc.type
     LEFT JOIN
@@ -229,4 +254,5 @@ export default {
   getBySlug: getBySlug,
   getByCategory: getByCategory,
   deleteById: deleteById,
+  updateCategoryIds: updateCategoryIds,
 };

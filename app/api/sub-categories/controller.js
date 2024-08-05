@@ -126,6 +126,19 @@ const getById = async (req, res) => {
   }
 };
 
+const updateCategoryIds = async (req, res) => {
+  try {
+    const data = await table.SubCategoryModel.updateCategoryIds();
+
+    res.send({ status: true, data: data });
+  } catch (error) {
+    console.error(error);
+    res
+      .code(INTERNAL_SERVER_ERROR)
+      .send({ status: false, message: error.message, error });
+  }
+};
+
 const get = async (req, res) => {
   try {
     const products = await table.SubCategoryModel.get(req);
@@ -168,4 +181,5 @@ export default {
   getBySlug: getBySlug,
   getByCategory: getByCategory,
   getById: getById,
+  updateCategoryIds: updateCategoryIds,
 };

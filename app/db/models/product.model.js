@@ -79,9 +79,11 @@ const create = async (req) => {
     meta_keywords: req.body.meta_keywords,
   });
 };
+
 const get = async (req) => {
   let whereConditions = [];
   const queryParams = {};
+  const searchQuery = req.query?.q?.split("+").join(" ");
 
   if (!req.user_data?.role) {
     whereConditions.push("prd.status = 'published'");
@@ -89,6 +91,16 @@ const get = async (req) => {
 
   if (req.query.featured) {
     whereConditions.push(`prd.is_featured = true`);
+  }
+
+  if (searchQuery) {
+    whereConditions.push(
+      `prd.title ILIKE '%${searchQuery}%' OR EXISTS (
+        SELECT 1 
+        FROM unnest(prd.tags) AS tag 
+        WHERE tag ILIKE '%${searchQuery}%'
+      ) OR sc.name ILIKE '%${searchQuery}%' OR cat.name ILIKE '%${searchQuery}%'`
+    );
   }
 
   let whereClause = "";
@@ -105,39 +117,59 @@ const get = async (req) => {
       prd.id,
       prd.title,
       prd.slug,
-      prd.custom_properties,
       prd.status,
-      sc.name AS sub_category_name,
-      sc.slug AS sub_category_slug,
-      cat.name AS category_name,
-      cat.slug AS category_slug
+      (
+        SELECT JSON_AGG(
+          JSON_BUILD_OBJECT(
+            'id', cat.id,
+            'name', cat.name,
+            'slug', cat.slug
+          )
+        )
+        FROM ${constants.models.CATEGORY_TABLE} cat
+        WHERE cat.id = ANY(
+          (
+            SELECT sc.category_ids
+            FROM ${constants.models.SUB_CATEGORY_TABLE} sc
+            WHERE sc.id = prd.sub_category_id
+          )::uuid[]
+        )
+      ) as categories,
+      JSON_AGG(
+        JSON_BUILD_OBJECT(
+          'id', sc.id,
+          'name', sc.name,
+          'slug', sc.slug
+        )
+      ) as sub_categories
     FROM
       ${constants.models.PRODUCT_TABLE} prd
       LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} sc ON sc.id = prd.sub_category_id
-      LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sc.category_id
     ${whereClause}
-    ORDER BY prd.updated_at DESC
+    GROUP BY
+      prd.id
+    ORDER BY
+      prd.updated_at DESC
     `;
   // LIMIT :limit OFFSET :offset;
-  // console.log(query);
   const products = await ProductModel.sequelize.query(query, {
     replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  const countQuery = `
-    SELECT COUNT(prd.id) AS total
-    FROM products prd
-    LEFT JOIN sub_categories sc ON sc.id = prd.sub_category_id
-    ${whereClause};
-  `;
+  // const countQuery = `
+  //   SELECT COUNT(prd.id) AS total
+  //   FROM products prd
+  //   LEFT JOIN sub_categories sc ON sc.id = prd.sub_category_id
+  //   ${whereClause};
+  // `;
 
-  const [{ total }] = await ProductModel.sequelize.query(countQuery, {
-    replacements: queryParams,
-    type: QueryTypes.SELECT,
-    raw: true,
-  });
+  // const [{ total }] = await ProductModel.sequelize.query(countQuery, {
+  //   replacements: queryParams,
+  //   type: QueryTypes.SELECT,
+  //   raw: true,
+  // });
 
   return {
     data: products,
@@ -242,9 +274,9 @@ const getByCategory = async (req, slug) => {
       cat.name AS category_name,
       cat.slug AS category_slug
     FROM
-      products prd
-      LEFT JOIN sub_categories subcat ON prd.sub_category_id = subcat.id
-      LEFT JOIN categories cat ON cat.id = subcat.category_id
+      ${constants.models.PRODUCT_TABLE} prd
+      LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} subcat ON prd.sub_category_id = subcat.id
+      LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = subcat.category_id
       WHERE cat.slug = '${slug}' AND prd.status = 'published'
       ${threshold}
   `;
@@ -289,13 +321,13 @@ const getBySubCategory = async (req, slug) => {
 
   let query = `
     SELECT
-      prd.*,
-      cat.name AS category_name,
-      cat.slug AS category_slug
+      prd.id,
+      prd.title,
+      prd.slug,
+      prd.custom_properties
     FROM
       products prd
       LEFT JOIN sub_categories subcat ON prd.sub_category_id = subcat.id
-      LEFT JOIN categories cat ON cat.id = subcat.category_id
       WHERE subcat.slug = '${slug}' AND prd.status = 'published'
       ${threshold}
   `;
@@ -370,7 +402,7 @@ const searchProducts = async (req) => {
       p.id, p.title, p.slug, p.tags
     FROM products AS p
     LEFT JOIN sub_categories subcat ON subcat.id = p.sub_category_id
-    LEFT JOIN categories cat ON cat.id = subcat.category_id
+    LEFT JOIN categories cat ON cat.id = ANY(subcat.category_ids)
     WHERE 
       (p.title ILIKE '%${q}%' 
       OR EXISTS (

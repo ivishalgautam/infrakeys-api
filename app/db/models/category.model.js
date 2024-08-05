@@ -96,18 +96,21 @@ const get = async (req) => {
       (
         SELECT COUNT(sc.id)
         FROM sub_categories sc
-        WHERE sc.category_id = cat.id
+        WHERE cat.id = ANY(sc.category_ids)
       ) AS total_sub_categories,
       JSON_AGG(
-        JSON_BUILD_OBJECT(
-          'id', subcat.id,
-          'name', subcat.name,
-          'slug', subcat.slug
-          )
+        CASE
+          WHEN subcat.id IS NOT NULL THEN
+            JSON_BUILD_OBJECT(
+              'id', subcat.id,
+              'name', subcat.name,
+              'slug', subcat.slug
+            )
+          END
       ) as sub_categories
     FROM
       categories cat
-      LEFT JOIN sub_categories subcat ON subcat.category_id = cat.id
+      LEFT JOIN sub_categories subcat ON cat.id = ANY(subcat.category_ids)
     ${whereClause}
     GROUP BY cat.id
     ORDER BY cat.created_at
@@ -158,9 +161,19 @@ const getBySlug = async (req, slug) => {
   const query = `
   SELECT
       cat.*,
-      JSON_AGG(subcat.*) as top_sub_categories
+      JSON_AGG(
+        CASE
+          WHEN subcat.id IS NOT NULL THEN
+            JSON_BUILD_OBJECT(
+              'id', subcat.id,
+              'name', subcat.name,
+              'slug', subcat.slug,
+              'image', subcat.image
+            )
+          END
+      ) as top_sub_categories
     FROM categories as cat
-    LEFT JOIN sub_categories subcat on cat.id = subcat.category_id
+    LEFT JOIN sub_categories subcat on cat.id = ANY(subcat.category_ids)
     WHERE cat.slug = '${req.params.slug || slug}'
     GROUP BY cat.id
   `;
