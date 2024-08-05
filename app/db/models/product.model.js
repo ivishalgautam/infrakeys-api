@@ -118,6 +118,7 @@ const get = async (req) => {
       prd.title,
       prd.slug,
       prd.status,
+      prd.custom_properties,
       (
         SELECT JSON_AGG(
           JSON_BUILD_OBJECT(
