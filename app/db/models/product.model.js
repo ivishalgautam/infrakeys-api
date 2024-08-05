@@ -146,6 +146,7 @@ const get = async (req) => {
     FROM
       ${constants.models.PRODUCT_TABLE} prd
       LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} sc ON sc.id = prd.sub_category_id
+      LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = ANY(sc.category_ids)
     ${whereClause}
     GROUP BY
       prd.id
