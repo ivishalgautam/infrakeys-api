@@ -121,7 +121,7 @@ const get = async (req) => {
       prd.custom_properties,
       (
         SELECT JSON_AGG(
-          JSON_BUILD_OBJECT(
+          JSONB_BUILD_OBJECT(
             'id', cat.id,
             'name', cat.name,
             'slug', cat.slug
@@ -137,7 +137,7 @@ const get = async (req) => {
         )
       ) as categories,
       JSON_AGG(
-        JSON_BUILD_OBJECT(
+        DISTINCT JSONB_BUILD_OBJECT(
           'id', sc.id,
           'name', sc.name,
           'slug', sc.slug
