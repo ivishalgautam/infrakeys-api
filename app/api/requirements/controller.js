@@ -7,13 +7,15 @@ const { NOT_FOUND, BAD_REQUEST, INTERNAL_SERVER_ERROR } = constants.http.status;
 
 async function create(req, res) {
   try {
-    // const record = await table.RequirementsModel.getByUserId(req.body.user_id);
-    // if (record)
-    //   return res
-    //     .status(BAD_REQUEST)
-    //     .send({ status: false, message: "Already exist!" });
-
+    const prefix = "REQ00000";
+    const requirementSequence = await table.RequirementSequenceModel.findOne();
+    const nextValue = requirementSequence.value + 1;
+    req.body.requirement_id = `${prefix}${nextValue}`;
+    console.log({ requirementSequence, nextValue });
     const data = await table.RequirementsModel.create(req);
+    if (data) {
+      await table.RequirementSequenceModel.update({ value: nextValue });
+    }
     res.send({ status: true, message: "Documents uploaded." });
   } catch (error) {
     console.log(error);

@@ -24,7 +24,7 @@ const create = async (req, res) => {
           });
 
           if (newOrder) {
-            await table.TempCartModel.deleteById(req, tempCartProductId);
+            await table.CartModel.deleteById(req, tempCartProductId);
           }
         }
       );

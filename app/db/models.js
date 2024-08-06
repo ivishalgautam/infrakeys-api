@@ -18,6 +18,7 @@ import pointsModel from "./models/points.model.js";
 import blogModel from "./models/blog.model.js";
 import applyCreditModel from "./models/apply-credit.model.js";
 import requirementsModel from "./models/requirements.model.js";
+import requirementSequenceModel from "./models/requirement-sequence.model.js";
 
 export default {
   UserModel: userModel,
@@ -39,4 +40,5 @@ export default {
   BlogModel: blogModel,
   ApplyCreditModel: applyCreditModel,
   RequirementsModel: requirementsModel,
+  RequirementSequenceModel: requirementSequenceModel,
 };

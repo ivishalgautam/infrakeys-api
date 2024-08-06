@@ -83,6 +83,16 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      requirement_reference: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        onDelete: "SET NULL",
+        references: {
+          model: constants.models.REQUIREMENT_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+      },
     },
     {
       createdAt: "created_at",
@@ -103,6 +113,7 @@ const create = async (req, enquiry_id) => {
       delivery_summary: req.body?.delivery_summary,
       delivery_time: req.body?.delivery_time,
       payment_method: req.body?.payment_method,
+      requirement_reference: req.body?.requirement_reference,
     },
     {
       returning: true,
@@ -125,11 +136,24 @@ const get = async (req) => {
 
   const query = `
     SELECT
-      enq.*,
-      usr.phone
-    FROM enquiries enq
-    LEFT JOIN users usr ON usr.id = enq.user_id
+      enq.id, enq.enquiry_type, enq.is_converted_to_order, enq.status, enq.created_at, enq.payment_method,
+      usr.phone,
+      COALESCE(
+        json_agg(
+          jsonb_build_object(
+            'id', rqr.id,
+            'requirement_id', rqr.requirement_id,
+            'docs', rqr.docs
+          )
+        ) FILTER(WHERE rqr.id IS NOT NULL), '[]'
+      ) as reference
+    FROM ${constants.models.ENQUIRY_TABLE} enq
+    LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = enq.user_id
+    LEFT JOIN ${constants.models.REQUIREMENT_TABLE} rqr ON rqr.id = enq.requirement_reference
     ${whereQuery}
+    GROUP BY
+      enq.id,
+      usr.phone
     ORDER BY enq.created_at DESC
   `;
 

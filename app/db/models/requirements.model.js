@@ -9,10 +9,16 @@ const init = async (sequelize) => {
     constants.models.REQUIREMENT_TABLE,
     {
       id: {
-        primaryKey: true,
-        allowNull: false,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
+        unique: true,
+        allowNull: false,
+        primaryKey: true,
+      },
+      requirement_id: {
+        primaryKey: true,
+        allowNull: false,
+        type: DataTypes.STRING,
         unique: true,
       },
       user_id: {
@@ -43,6 +49,7 @@ const create = async (req) => {
   return await RequirementModel.create({
     user_id: req.user_data?.id,
     docs: req.body?.docs,
+    requirement_id: req.body?.requirement_id,
   });
 };
 
@@ -58,10 +65,14 @@ const get = async (req, id) => {
         rqmnt.*,
         usr.name,
         usr.phone,
-        usr.id as user_id
-       FROM ${constants.models.REQUIREMENT_TABLE} rqmnt
-       LEFT JOIN users usr ON usr.id = rqmnt.user_id
-       ${whereQuery}
+        usr.id as user_id,
+        enq.id as enquiry_id,
+        ord.id as order_id
+      FROM ${constants.models.REQUIREMENT_TABLE} rqmnt
+      LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = rqmnt.user_id
+      LEFT JOIN ${constants.models.ENQUIRY_TABLE} enq ON enq.requirement_reference = rqmnt.id
+      LEFT JOIN ${constants.models.ORDER_TABLE} ord ON ord.requirement_reference = rqmnt.id
+      ${whereQuery}
     `;
 
   return await RequirementModel.sequelize.query(query, {

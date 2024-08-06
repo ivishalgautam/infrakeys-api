@@ -60,6 +60,16 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      requirement_reference: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        onDelete: "SET NULL",
+        references: {
+          model: constants.models.REQUIREMENT_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+      },
     },
     {
       createdAt: "created_at",
@@ -80,6 +90,7 @@ const create = async ({ data }) => {
       order_amount: data?.order_amount,
       payment_method: data?.payment_method,
       assigned_to: data?.assigned_to,
+      requirement_reference: data?.requirement_reference,
     },
     {
       returning: true,
@@ -102,11 +113,24 @@ const get = async (req) => {
 
   const query = `
   SELECT
-      o.*,
-      usr.phone
-    FROM orders o
-    LEFT JOIN users usr ON usr.id = o.user_id
+      o.id, o.status, o.created_at, o.payment_method,
+      usr.phone,
+      COALESCE(
+        json_agg(
+          jsonb_build_object(
+            'id', rqr.id,
+            'requirement_id', rqr.requirement_id,
+            'docs', rqr.docs
+          )
+        ) FILTER(WHERE rqr.id IS NOT NULL), '[]'
+      ) as reference
+    FROM ${constants.models.ORDER_TABLE} o
+    LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = o.user_id
+    LEFT JOIN ${constants.models.REQUIREMENT_TABLE} rqr ON rqr.id = o.requirement_reference
     ${whereQuery}
+    GROUP BY
+      o.id,
+      usr.phone
     ORDER BY o.created_at DESC
   `;
 
