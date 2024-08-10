@@ -53,6 +53,10 @@ const init = async (sequelize) => {
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
+      faq: {
+        type: DataTypes.JSONB,
+        defaultValue: [],
+      },
       meta_title: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -83,6 +87,7 @@ const create = async (req) => {
     is_featured: req.body?.is_featured,
     category_ids: req.body?.category_ids,
     type: req.body?.type,
+    faq: req.body?.faq,
     meta_title: req.body?.meta_title,
     meta_description: req.body?.meta_description,
     meta_keywords: req.body?.meta_keywords,
@@ -153,6 +158,7 @@ const update = async (req, id) => {
       meta_title: req.body?.meta_title,
       meta_description: req.body?.meta_description,
       meta_keywords: req.body?.meta_keywords,
+      faq: req.body?.faq,
     },
     {
       where: {
@@ -211,26 +217,20 @@ const getBySlug = async (req, slug) => {
 const getByCategory = async (req, slug) => {
   let query = `
   SELECT
-        sc.*,
+        sc.id,
+        sc.name,
+        sc.slug,
         cat.name as catgeory_name,
         cat.slug as catgeory_slug,
-        sct.name as type,
-        JSON_AGG(DISTINCT p.*) AS products
+        sct.name as type
     FROM
         sub_categories sc
     LEFT JOIN
         categories cat ON cat.id = ANY(sc.category_ids)
     LEFT JOIN
         sub_category_types sct ON sct.id = sc.type
-    LEFT JOIN
-        products p ON sc.id = p.sub_category_id
     WHERE
         cat.slug = '${req.params.slug || slug}'
-    GROUP BY
-        sc.id,
-        cat.name,
-        cat.slug,
-        sct.name
   `;
 
   return await SubCategoryModel.sequelize.query(query, {
