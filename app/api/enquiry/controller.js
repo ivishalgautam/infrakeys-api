@@ -200,6 +200,7 @@ const convertToOrder = async (req, res) => {
         payment_method: record?.payment_method,
         assigned_to: record?.assigned_to,
         requirement_reference: record?.requirement_reference,
+        quotation_file: record?.quotation_file,
       },
     });
 

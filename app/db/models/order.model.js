@@ -70,6 +70,10 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      quotation_file: {
+        type: DataTypes.TEXT,
+        defaultValue: "",
+      },
     },
     {
       createdAt: "created_at",
@@ -91,6 +95,7 @@ const create = async ({ data }) => {
       payment_method: data?.payment_method,
       assigned_to: data?.assigned_to,
       requirement_reference: data?.requirement_reference,
+      quotation_file: data?.quotation_file,
     },
     {
       returning: true,

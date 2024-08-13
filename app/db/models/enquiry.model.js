@@ -93,6 +93,10 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      quotation_file: {
+        type: DataTypes.TEXT,
+        defaultValue: "",
+      },
     },
     {
       createdAt: "created_at",
@@ -173,6 +177,7 @@ const update = async (req, id) => {
       po_number: req.body?.po_number,
       po_file: req.body?.po_file,
       is_converted_to_order: req.body?.is_converted_to_order,
+      quotation_file: req.body?.quotation_file,
       assigned_to: req.body?.assigned_to === "" ? null : req.body?.assigned_to,
     },
     {
