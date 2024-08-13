@@ -4,6 +4,7 @@ import axios from "axios";
 import config from "../config/index.js";
 
 export async function sendOtp({ country_code = "+91", phone, name, otp }) {
+  return true;
   let configs = {
     method: "post",
     maxBodyLength: Infinity,

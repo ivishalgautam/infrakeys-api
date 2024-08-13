@@ -91,6 +91,7 @@ export default (app) => {
   // query
   app.post("/v1/queries", querySchema, queryController.create);
 
+  // blogs
   app.get("/v1/blogs", {}, blogController.get);
   app.get("/v1/blogs/getBySlug/:slug", {}, blogController.getBySlug);
   app.get("/v1/blogs/getRelatedBlogs/:id", {}, blogController.getRelatedBlogs);
