@@ -140,7 +140,7 @@ const get = async (req) => {
 
   const query = `
     SELECT
-      enq.id, enq.enquiry_type, enq.is_converted_to_order, enq.status, enq.created_at, enq.payment_method,
+      enq.id, enq.enquiry_type, enq.is_converted_to_order, enq.status, enq.created_at, enq.payment_method, enq.quotation_file,
       usr.phone,
       COALESCE(
         json_agg(
