@@ -231,8 +231,8 @@ const getBySlug = async (req, slug) => {
           WHEN COUNT(rp.id) > 0 THEN json_agg(rp.*)
           ELSE '[]'::json
         END AS related_products,
-         json_agg(
-          DISTINCT json_build_object(
+        json_agg(
+          json_build_object(
             'id', cat.id,
             'name', cat.name,
             'slug', cat.slug

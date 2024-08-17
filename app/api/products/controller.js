@@ -69,7 +69,17 @@ const getBySlug = async (req, res) => {
         .send({ status: false, message: "Product not found!" });
     }
 
-    res.send({ status: true, data: record });
+    res.send({
+      status: true,
+      data: {
+        ...record,
+        categories: [
+          ...new Map(
+            record?.categories.map((item) => [item.id, item])
+          ).values(),
+        ],
+      },
+    });
   } catch (error) {
     console.error(error);
     res
