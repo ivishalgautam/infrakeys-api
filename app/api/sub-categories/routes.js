@@ -8,7 +8,7 @@ const schema = {
       name: { type: "string" },
       image: { type: "string" },
     },
-    required: ["name", "image", "category_id"],
+    required: ["name", "image"],
   },
 };
 
