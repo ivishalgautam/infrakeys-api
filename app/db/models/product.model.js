@@ -232,7 +232,7 @@ const getBySlug = async (req, slug) => {
           ELSE '[]'::json
         END AS related_products,
          json_agg(
-          json_build_object(
+          DISTINCT json_build_object(
             'id', cat.id,
             'name', cat.name,
             'slug', cat.slug
