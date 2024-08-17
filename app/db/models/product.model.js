@@ -237,7 +237,7 @@ const getBySlug = async (req, slug) => {
             'name', cat.name,
             'slug', cat.slug
           )
-        )
+        ) as categories
       FROM
         products prd
       LEFT JOIN sub_categories subcat ON subcat.id = prd.sub_category_id
@@ -284,7 +284,7 @@ const getByCategory = async (req, slug) => {
           'name', cat.name,
           'slug', cat.slug
         )
-      )
+      ) as categories
     FROM
       ${constants.models.PRODUCT_TABLE} prd
       LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} subcat ON prd.sub_category_id = subcat.id
