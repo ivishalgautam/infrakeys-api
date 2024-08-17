@@ -231,12 +231,17 @@ const getBySlug = async (req, slug) => {
           WHEN COUNT(rp.id) > 0 THEN json_agg(rp.*)
           ELSE '[]'::json
         END AS related_products,
-        cat.name as category_name,
-        cat.slug as category_slug
+         json_agg(
+          json_build_object(
+            'id', cat.id,
+            'name', cat.name,
+            'slug', cat.slug
+          )
+        )
       FROM
         products prd
       LEFT JOIN sub_categories subcat ON subcat.id = prd.sub_category_id
-      LEFT JOIN categories cat ON cat.id = subcat.category_id
+      LEFT JOIN categories cat ON cat.id = ANY(subcat.category_id)
       LEFT JOIN products rp ON rp.sub_category_id = subcat.id AND rp.id != prd.id
       WHERE prd.slug = '${req.params.slug || slug}'
       GROUP BY
