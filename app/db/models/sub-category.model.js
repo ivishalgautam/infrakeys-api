@@ -78,7 +78,7 @@ const init = async (sequelize) => {
 
   await SubCategoryModel.sync({ alter: true });
 };
-
+//
 const create = async (req) => {
   return await SubCategoryModel.create({
     name: req.body?.name,
