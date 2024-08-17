@@ -277,14 +277,7 @@ const getByCategory = async (req, slug) => {
       prd.id,
       prd.title,
       prd.slug,
-      prd.custom_properties,
-      json_agg(
-        json_build_object(
-          'id', cat.id,
-          'name', cat.name,
-          'slug', cat.slug
-        )
-      ) as categories
+      prd.custom_properties
     FROM
       ${constants.models.PRODUCT_TABLE} prd
       LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} subcat ON prd.sub_category_id = subcat.id
