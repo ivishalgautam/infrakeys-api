@@ -84,8 +84,8 @@ const verifyCustomer = async (req, res) => {
         .code(400)
         .send({ message: "Please contact administrator for login!" });
 
-    // const otp = crypto.randomInt(100000, 999999);
-    const otp = 111111;
+    const otp = crypto.randomInt(100000, 999999);
+    // const otp = 111111;
     console.log({ otp });
 
     if (record) {
@@ -94,11 +94,13 @@ const verifyCustomer = async (req, res) => {
         otp: otp,
       });
 
-      await sendOtp({ name: record?.name, phone: record.phone, otp });
-      // await sendTwilioOTP({ phone: record.phone, name: record.name, otp });
-      await sendMsg91OTP();
-      // await sendFast2SmsOtp();
-      // await sendSarvOtp();
+      await sendOtp({
+        name:
+          String(record?.name).charAt(0).toUpperCase() +
+          String(record?.name).substring(1),
+        phone: record.phone,
+        otp,
+      });
     }
 
     return res.send({ status: true, message: "Otp sent." });
@@ -118,8 +120,7 @@ const createNewCustomer = async (req, res) => {
     }
 
     const userData = await table.UserModel.createCustomer(req);
-    // const otp = crypto.randomInt(100000, 999999);
-    const otp = 111111;
+    const otp = crypto.randomInt(100000, 999999);
     console.log({ otp });
 
     if (userData) {
