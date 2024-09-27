@@ -73,7 +73,7 @@ const get = async (req, id) => {
       LEFT JOIN ${constants.models.ENQUIRY_TABLE} enq ON enq.requirement_reference = rqmnt.id
       LEFT JOIN ${constants.models.ORDER_TABLE} ord ON ord.requirement_reference = rqmnt.id
       ${whereQuery}
-      ORDER BY rqmnt.created_at
+      ORDER BY rqmnt.created_at DESC
     `;
 
   return await RequirementModel.sequelize.query(query, {
