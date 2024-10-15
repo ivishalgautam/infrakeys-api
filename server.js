@@ -69,6 +69,11 @@ export default (app) => {
   // categories
   app.get("/v1/categories", {}, categoriesController.get);
   app.get("/v1/categories/:slug", {}, categoriesController.getBySlug);
+  app.get(
+    "/v1/categories/getVariantsBySlug/:slug",
+    {},
+    categoriesController.getVariantsBySlug
+  );
 
   // sub-categories
   app.get("/v1/sub-categories", {}, subCategoriesController.get);

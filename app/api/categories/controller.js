@@ -7,6 +7,7 @@ import fileController from "../upload_files/controller.js";
 const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = constants.http.status;
 
 const create = async (req, res) => {
+  // const isVariant = req.body?.is_variant ?? false;
   try {
     let slug = slugify(req.body.name, { lower: true });
     req.body.slug = slug;
@@ -41,7 +42,6 @@ const updateById = async (req, res) => {
     }
 
     const slugExist = await table.CategoryModel.getBySlug(req, req.body.slug);
-
     // Check if there's another Product with the same slug but a different ID
     if (slugExist && record?.id !== slugExist?.id)
       return res
@@ -113,6 +113,48 @@ const get = async (req, res) => {
   }
 };
 
+const getVariants = async (req, res) => {
+  try {
+    const record = await table.CategoryModel.getById(req);
+    if (!record)
+      return res
+        .code(NOT_FOUND)
+        .send({ status: false, message: "Category not found!" });
+
+    res.send({
+      status: true,
+      data: await table.CategoryModel.getVariants(req),
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .code(INTERNAL_SERVER_ERROR)
+      .send({ status: false, message: error.message, error });
+  }
+};
+
+const getVariantsBySlug = async (req, res) => {
+  try {
+    const record = await table.CategoryModel.getBySlug(req);
+    if (!record)
+      return res
+        .code(NOT_FOUND)
+        .send({ status: false, message: "Category not found!" });
+
+    const data = await table.CategoryModel.getVariantsBySlug(req);
+
+    res.send({
+      status: true,
+      data: data,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .code(INTERNAL_SERVER_ERROR)
+      .send({ status: false, message: error.message, error });
+  }
+};
+
 const deleteById = async (req, res) => {
   try {
     const record = await table.CategoryModel.getById(req, req.params.id);
@@ -142,4 +184,6 @@ export default {
   deleteById: deleteById,
   getBySlug: getBySlug,
   getById: getById,
+  getVariants: getVariants,
+  getVariantsBySlug: getVariantsBySlug,
 };

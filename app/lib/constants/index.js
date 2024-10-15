@@ -45,6 +45,7 @@ const constants = {
     USER_TABLE: "users",
     PRODUCT_TABLE: "products",
     CATEGORY_TABLE: "categories",
+    CATEGORY_VARIANT_TABLE: "category_variants",
     SUB_CATEGORY_TABLE: "sub_categories",
     SUB_CATEGORY_TYPE_TABLE: "sub_category_types",
     BRAND_TABLE: "brands",

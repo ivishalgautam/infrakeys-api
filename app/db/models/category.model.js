@@ -1,6 +1,6 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk, { QueryTypes } from "sequelize";
+import sequelizeFwk, { Deferrable, QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
 
 let CategoryModel = null;
@@ -26,11 +26,11 @@ const init = async (sequelize) => {
       },
       image: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       banners: {
         type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: false,
+        allowNull: true,
       },
       faq: {
         type: DataTypes.JSONB,
@@ -48,6 +48,20 @@ const init = async (sequelize) => {
       meta_keywords: {
         type: DataTypes.TEXT,
         allowNull: true,
+      },
+      is_variant: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      category_id: {
+        type: DataTypes.UUID,
+        onDelete: "CASCADE",
+        allowNull: true,
+        references: {
+          model: constants.models.CATEGORY_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
       },
     },
     {
@@ -70,11 +84,13 @@ const create = async (req) => {
     meta_title: req.body?.meta_title,
     meta_description: req.body?.meta_description,
     meta_keywords: req.body?.meta_keywords,
+    is_variant: req.body?.is_variant,
+    category_id: req.body?.category_id,
   });
 };
 
 const get = async (req) => {
-  const whereConditions = [];
+  const whereConditions = ["cat.is_variant = false"];
   const queryParams = {};
   let whereClause = "";
 
@@ -124,6 +140,46 @@ const get = async (req) => {
   return rows;
 };
 
+const getVariants = async (req) => {
+  let query = `
+  SELECT
+      cat.id,
+      cat.name
+    FROM
+      ${constants.models.CATEGORY_TABLE} cat
+    WHERE cat.category_id = '${req.params.id}'
+    ORDER BY cat.created_at
+  `;
+
+  return await CategoryModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+};
+
+const getVariantsBySlug = async (req) => {
+  const { slug } = req.params;
+  let query = `
+  SELECT
+      catv.id,
+      catv.name,
+      catv.slug,
+      catv.is_variant,
+      cat.slug as category_slug
+    FROM
+      ${constants.models.CATEGORY_TABLE} cat
+    LEFT JOIN ${constants.models.CATEGORY_TABLE} catv ON catv.category_id = cat.id
+    WHERE cat.slug = :slug
+    ORDER BY cat.created_at
+  `;
+
+  return await CategoryModel.sequelize.query(query, {
+    replacements: { slug },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+};
+
 const update = async (req, id) => {
   const [rowCount, rows] = await CategoryModel.update(
     {
@@ -152,16 +208,32 @@ const update = async (req, id) => {
 const getById = async (req, id) => {
   return await CategoryModel.findOne({
     where: {
-      id: req.params.id || id,
+      id: req?.params?.id || id,
     },
+    raw: true,
+    plain: true,
   });
 };
 
-const getBySlug = async (req, slug) => {
+const getBySlug = async (req, catSlug) => {
+  const slug = req.params.slug || catSlug;
+
   const query = `
   SELECT
-      cat.*,
-      JSON_AGG(
+      cat.id,
+      cat.name,
+      cat.slug,
+      COALESCE(cat.image, cat2.image) as image,
+      COALESCE(cat.banners, cat2.banners) as banners,
+      cat.faq,
+      cat.is_featured,
+      cat.meta_title,
+      cat.meta_description,
+      cat.meta_keywords,
+      cat.is_variant,
+      cat.category_id,
+      cat2.slug as main_slug,
+      COALESCE(JSON_AGG(
         CASE
           WHEN subcat.id IS NOT NULL THEN
             JSON_BUILD_OBJECT(
@@ -171,14 +243,16 @@ const getBySlug = async (req, slug) => {
               'image', subcat.image
             )
           END
-      ) as top_sub_categories
-    FROM categories as cat
-    LEFT JOIN sub_categories subcat on cat.id = ANY(subcat.category_ids)
-    WHERE cat.slug = '${req.params.slug || slug}'
-    GROUP BY cat.id
+      ) FILTER (WHERE subcat.id IS NOT NULL), '[]') as top_sub_categories
+    FROM ${constants.models.CATEGORY_TABLE} as cat
+    LEFT JOIN ${constants.models.CATEGORY_TABLE} as cat2 ON cat.category_id = cat2.id
+    LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} subcat ON cat.id = ANY(subcat.category_ids) OR cat2.id = ANY(subcat.category_ids)
+    WHERE cat.slug = :slug
+    GROUP BY cat.id, cat2.slug, cat2.image, cat2.banners
   `;
 
   return await CategoryModel.sequelize.query(query, {
+    replacements: { slug },
     type: QueryTypes.SELECT,
     raw: true,
     plain: true,
@@ -199,4 +273,6 @@ export default {
   getById: getById,
   getBySlug: getBySlug,
   deleteById: deleteById,
+  getVariants: getVariants,
+  getVariantsBySlug: getVariantsBySlug,
 };
