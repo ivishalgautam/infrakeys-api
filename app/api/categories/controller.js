@@ -34,7 +34,6 @@ const updateById = async (req, res) => {
     req.body.slug = slug;
 
     const record = await table.CategoryModel.getById(req, req.params.id);
-
     if (!record) {
       return res
         .code(NOT_FOUND)

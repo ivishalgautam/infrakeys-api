@@ -26,6 +26,11 @@ const config = {
   interakt_api_key: process.env.INTERACT_API_KEY,
   interakt_template_name: process.env.INTERACT_TEMPLATE_NAME,
   interakt_enq_template_name: process.env.INTERACT_ENQUIRY_TEMPLATE_NAME,
+
+  // smartping
+  smartping_username: process.env.SMARTPING_USERNAME,
+  smartping_password: process.env.SMARTPING_PASSWORD,
+  smartping_content_id: process.env.SMARTPING_CONTENT_ID
 };
 
 export default config;
