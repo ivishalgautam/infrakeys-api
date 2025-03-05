@@ -94,14 +94,15 @@ const verifyCustomer = async (req, res) => {
         otp: otp,
       });
 
-      process.env.NODE_ENV !== "development" &&
-        (await sendOtp({
+      if (process.env.NODE_ENV !== "development") {
+        await sendOtp({
           name:
             String(record?.name).charAt(0).toUpperCase() +
             String(record?.name).substring(1),
           phone: record.phone,
           otp,
-        }));
+        });
+      }
     }
 
     return res.send({ status: true, message: "Otp sent." });
