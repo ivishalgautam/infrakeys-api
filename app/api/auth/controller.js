@@ -73,10 +73,10 @@ const createNewUser = async (req, res) => {
 
 const verifyCustomer = async (req, res) => {
   try {
-    const record = await table.UserModel.getByPhone(req);
+    let record = await table.UserModel.getByPhone(req);
 
     if (!record) {
-      return res.code(404).send({ message: "Customer not found!" });
+      record = await table.UserModel.createCustomer(req);
     }
 
     if (!record.is_active)
@@ -94,13 +94,14 @@ const verifyCustomer = async (req, res) => {
         otp: otp,
       });
 
-      await sendOtp({
-        name:
-          String(record?.name).charAt(0).toUpperCase() +
-          String(record?.name).substring(1),
-        phone: record.phone,
-        otp,
-      });
+      process.env.NODE_ENV !== "development" &&
+        (await sendOtp({
+          name:
+            String(record?.name).charAt(0).toUpperCase() +
+            String(record?.name).substring(1),
+          phone: record.phone,
+          otp,
+        }));
     }
 
     return res.send({ status: true, message: "Otp sent." });

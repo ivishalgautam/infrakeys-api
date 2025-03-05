@@ -33,7 +33,7 @@ const init = async (sequelize) => {
       },
       name: {
         type: sequelizeFwk.DataTypes.STRING,
-        allowNull: false,
+        defaultValue: "",
       },
       password: {
         type: sequelizeFwk.DataTypes.STRING,
@@ -175,6 +175,7 @@ const update = async (req, user_id) => {
       username: req.body?.username,
       name: req.body?.name,
       phone: req.body?.phone,
+      email: req.body?.email,
       role: req.body?.role,
       is_active: req.body?.is_active,
       is_verified: req.body?.is_verified,
