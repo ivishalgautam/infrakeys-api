@@ -35,6 +35,10 @@ const init = async (sequelize) => {
         type: sequelizeFwk.DataTypes.STRING,
         defaultValue: "",
       },
+      company_name: {
+        type: sequelizeFwk.DataTypes.STRING,
+        defaultValue: "",
+      },
       password: {
         type: sequelizeFwk.DataTypes.STRING,
         allowNull: true,
@@ -91,6 +95,7 @@ const createCustomer = async (req) => {
       name: req.body?.name,
       phone: req.body?.phone,
       email: req.body?.email,
+      company_name: req.body?.company_name,
     },
     { returning: true, raw: true }
   );
@@ -124,6 +129,7 @@ const getById = async (req, user_id) => {
       "email",
       "is_verified",
       "channel_financing",
+      "company_name",
     ],
   });
 };
@@ -144,6 +150,7 @@ const getByUsername = async (req, record = undefined) => {
       "email",
       "is_verified",
       "channel_financing",
+      "company_name",
     ],
   });
 };
@@ -165,6 +172,7 @@ const getByPhone = async (req, record = undefined) => {
       "email",
       "is_verified",
       "channel_financing",
+      "company_name",
     ],
   });
 };
@@ -180,6 +188,7 @@ const update = async (req, user_id) => {
       is_active: req.body?.is_active,
       is_verified: req.body?.is_verified,
       channel_financing: req.body?.channel_financing,
+      company_name: req.body?.company_name,
     },
     {
       where: {
@@ -194,6 +203,7 @@ const update = async (req, user_id) => {
         "phone",
         "is_verified",
         "channel_financing",
+        "company_name",
       ],
       plain: true,
     }

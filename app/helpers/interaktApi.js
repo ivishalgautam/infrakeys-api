@@ -12,10 +12,10 @@ export async function sendOtp({ country_code = "+91", phone, name, otp }) {
   // };
 
   let axiosConfig = {
-    method: 'get',
+    method: "get",
     maxBodyLength: Infinity,
     url: `https://pgapi.smartping.ai/fe/api/v1/send?username=${config.smartping_username}&password=${config.smartping_password}&unicode=false&from=INFKEY&to=${phone}&text=Your%20OTP%20for%20Infrakeys%20is%20${otp}.%20It%20is%20valid%20for%205%20minutes.%20Please%20do%20not%20share%20this%20OTP%20with%20anyone&dltContentId=${config.smartping_content_id}`,
-    headers: { }
+    headers: {},
   };
 
   axios
