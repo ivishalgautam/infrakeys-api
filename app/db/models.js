@@ -19,6 +19,8 @@ import blogModel from "./models/blog.model.js";
 import applyCreditModel from "./models/apply-credit.model.js";
 import requirementsModel from "./models/requirements.model.js";
 import requirementSequenceModel from "./models/requirement-sequence.model.js";
+import newsModel from "./models/news.model.js";
+import newsCategoryModel from "./models/news-category.model.js";
 
 export default {
   UserModel: userModel,
@@ -41,4 +43,6 @@ export default {
   ApplyCreditModel: applyCreditModel,
   RequirementsModel: requirementsModel,
   RequirementSequenceModel: requirementSequenceModel,
+  NewsCategoryModel: newsCategoryModel,
+  NewsModel: newsModel,
 };

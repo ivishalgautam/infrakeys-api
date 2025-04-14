@@ -21,6 +21,8 @@ import bannerController from "./app/api/banner/controller.js";
 import queryController from "./app/api/query/controller.js";
 import userController from "./app/api/users/controller.js";
 import blogController from "./app/api/blog/controller.js";
+import newsController from "./app/api/news/controller.js";
+import newsCategoriesController from "./app/api/news-category/controller.js";
 import { querySchema } from "./app/api/query/routes.js";
 /*
   Register External packages, routes, database connection
@@ -100,6 +102,19 @@ export default (app) => {
   app.get("/v1/blogs", {}, blogController.get);
   app.get("/v1/blogs/getBySlug/:slug", {}, blogController.getBySlug);
   app.get("/v1/blogs/getRelatedBlogs/:id", {}, blogController.getRelatedBlogs);
+
+  // news
+  app.get("/v1/news", {}, newsController.get);
+  app.get("/v1/news/getBySlug/:slug", {}, newsController.getBySlug);
+  app.get(
+    "/v1/news/getByCategorySlug/:slug",
+    {},
+    newsController.getByCategorySlug
+  );
+  app.get("/v1/news/getRelatedNews/:id", {}, newsController.getRelatedNews);
+
+  // news categories
+  app.get("/v1/news-categories", {}, newsCategoriesController.get);
 
   // enquiry
   // app.post("/v1/enquiries", {}, enquiryController.create);

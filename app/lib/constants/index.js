@@ -62,6 +62,8 @@ const constants = {
     POINTS_TABLE: "points",
     REQUIREMENT_TABLE: "requirements",
     APPLY_CREDIT_TABLE: "apply_for_credits",
+    NEWS_TABLE: "news",
+    NEWS_CATEGORY_TABLE: "news_categories",
   },
   bcrypt: {
     SALT_ROUNDS: 10,

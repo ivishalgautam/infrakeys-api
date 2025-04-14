@@ -16,6 +16,8 @@ import dashboardRoutes from "../../api/dashboard/routes.js";
 import blogRoutes from "../../api/blog/routes.js";
 import creditApplies from "../../api/apply-credit/routes.js";
 import requirementsRoutes from "../../api/requirements/routes.js";
+import newsRoutes from "../../api/news/routes.js";
+import newsCategoryRoutes from "../../api/news-category/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -36,4 +38,6 @@ export default async function routes(fastify, options) {
   fastify.register(blogRoutes, { prefix: "blogs" });
   fastify.register(creditApplies, { prefix: "credit-applies" });
   fastify.register(requirementsRoutes, { prefix: "requirements" });
+  fastify.register(newsRoutes, { prefix: "news" });
+  fastify.register(newsCategoryRoutes, { prefix: "news-categories" });
 }
