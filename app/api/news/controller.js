@@ -4,7 +4,11 @@ import table from "../../db/models.js";
 
 const create = async (req, res) => {
   try {
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
+    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+      remove: /[^a-zA-Z0-9\-_\s]/g,
+      lower: true,
+      trim: true,
+    });
     res.send(await table.NewsModel.create(req));
   } catch (error) {
     console.error(error);
@@ -17,7 +21,11 @@ const update = async (req, res) => {
     const record = await table.NewsModel.getById(req);
     if (!record) return res.code(404).send({ message: "News not found!" });
 
-    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title);
+    req.body.slug = slugify(req.body.slug ? req.body.slug : req.body.title, {
+      remove: /[^a-zA-Z0-9\-_\s]/g,
+      lower: true,
+      trim: true,
+    });
     res.send(await table.NewsModel.update(req));
   } catch (error) {
     console.error(error);
