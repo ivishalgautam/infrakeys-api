@@ -133,7 +133,7 @@ const update = async (req, id) => {
   const [rowCount, rows] = await NewsModel.update(
     {
       title: req.body.title,
-      slug: String(req.body.slug).toLowerCase(),
+      slug: req.body.slug,
       image: req.body.image,
       short_description: req.body.short_description,
       categories: req.body.categories,
