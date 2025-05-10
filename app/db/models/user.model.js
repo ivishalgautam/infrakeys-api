@@ -1,7 +1,7 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
 import hash from "../../lib/encryption/index.js";
-import sequelizeFwk from "sequelize";
+import sequelizeFwk, { QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 import moment from "moment";
 
@@ -102,14 +102,66 @@ const createCustomer = async (req) => {
 };
 
 const get = async (req) => {
-  const role = req.query?.role;
-  return await UserModel.findAll({
-    where: { role: role && role !== "admin" ? role : { [Op.ne]: "admin" } },
-    order: [["created_at", "DESC"]],
-    attributes: {
-      exclude: ["password", "reset_password_token", "confirmation_token"],
-    },
+  const whereConditions = [`usr.role != 'admin'`];
+  const queryParams = {};
+
+  const q = req.query.q ?? null;
+  if (q) {
+    whereConditions.push(
+      "(usr.name ILIKE :q OR usr.email ILIKE :q OR usr.company_name ILIKE :q)"
+    );
+    queryParams.q = `%${q}%`;
+  }
+
+  const role =
+    req.query.role && req.query.role !== "all" ? req.query.role : null;
+  if (role) {
+    whereConditions.push("usr.role = :role");
+    queryParams.role = role;
+  }
+
+  let whereClause = "";
+
+  if (whereConditions.length) {
+    whereClause = `WHERE ${whereConditions.join(" AND ")}`;
+  }
+
+  const page = req.query.page ? Math.max(1, parseInt(req.query.page)) : 1;
+  const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+  const offset = (page - 1) * limit;
+
+  let query = `
+  SELECT
+      *
+    FROM ${constants.models.USER_TABLE} usr
+    ${whereClause}
+    LIMIT :limit OFFSET :offset
+  `;
+
+  let countQuery = `
+  SELECT
+     COUNT(usr.id) OVER()::integer as total
+    FROM ${constants.models.USER_TABLE} usr
+    ${whereClause}
+  `;
+
+  const users = await UserModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    replacements: { ...queryParams, limit, offset },
+    raw: true,
   });
+
+  const countResult = await UserModel.sequelize.query(countQuery, {
+    type: QueryTypes.SELECT,
+    replacements: queryParams,
+    raw: true,
+    plain: true,
+  });
+
+  const total = parseInt(countResult.total, 10);
+  const totalPages = Math.ceil(total / limit);
+
+  return { users, total_pages: totalPages, total };
 };
 
 const getById = async (req, user_id) => {

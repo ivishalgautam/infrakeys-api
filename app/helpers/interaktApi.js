@@ -10,7 +10,6 @@ export async function sendOtp({ country_code = "+91", phone, name, otp }) {
   //   url: `https://app.wafly.in/api/sendtemplate.php?LicenseNumber=97288548722&APIKey=${process.env.INTERACT_API_KEY}&Contact=${country_code}${phone}&Template=${process.env.INTERACT_TEMPLATE_NAME}&Param=${name},OTP,${otp}`,
   //   headers: {},
   // };
-  console.log({ config });
   let axiosConfig = {
     method: "get",
     maxBodyLength: Infinity,
