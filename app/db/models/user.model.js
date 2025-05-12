@@ -135,6 +135,7 @@ const get = async (req) => {
       *
     FROM ${constants.models.USER_TABLE} usr
     ${whereClause}
+    ORDER BY usr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
 
