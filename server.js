@@ -105,7 +105,7 @@ export default (app) => {
 
   // news
   app.get("/v1/news", {}, newsController.get);
-  app.get("/v1/news/getBySlug/:slug", {}, newsController.getBySlug);
+  app.get("/v1/news/getBySlug/:slug(*)", {}, newsController.getBySlug);
   app.get(
     "/v1/news/getByCategorySlug/:slug",
     {},
