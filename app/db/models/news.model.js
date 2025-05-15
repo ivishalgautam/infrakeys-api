@@ -174,10 +174,12 @@ const getBySlug = async (req, slug) => {
       cat.name as category_name
     FROM ${constants.models.NEWS_TABLE} nw
     LEFT JOIN ${constants.models.NEWS_CATEGORY_TABLE} cat ON cat.id = nw.category
-    WHERE nw.slug = '${req.params.slug || slug}'
+    WHERE nw.slug = :slug
   `;
-
+  const slug = req.params?.slug || slug;
+  console.log({ slug });
   return await NewsModel.sequelize.query(query, {
+    replacements: { slug },
     type: QueryTypes.SELECT,
     plain: true,
   });
