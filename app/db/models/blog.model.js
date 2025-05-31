@@ -59,6 +59,10 @@ const init = async (sequelize) => {
         type: DataTypes.JSONB,
         defaultValue: "[]",
       },
+      date: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       createdAt: "created_at",
@@ -83,6 +87,7 @@ const create = async (req) => {
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
       faq: req.body.faq,
+      date: req.body.date,
     },
     { returning: true, raw: true }
   );
@@ -103,22 +108,16 @@ const get = async (req) => {
 
   let query = `
   SELECT 
-      b.id,
-      b.title,
-      b.image,
-      b.slug,
-      b.short_description,
-      b.created_at,
-      b.updated_at,
+      b.id, b.title, b.image, b.slug, b.short_description, b.date, b.created_at, b.updated_at,
       CASE
-          WHEN COUNT(cat.id) > 0 THEN json_agg(
-              json_build_object(
-                'id', cat.id, 
-                'name', cat.name,
-                'slug', cat.slug
-              )
+        WHEN COUNT(cat.id) > 0 THEN json_agg(
+          json_build_object(
+            'id', cat.id, 
+            'name', cat.name,
+            'slug', cat.slug
           )
-          ELSE '[]'
+        )
+        ELSE '[]'
       END AS categories
     FROM
       ${constants.models.BLOG_TABLE} b
@@ -150,6 +149,7 @@ const update = async (req, id) => {
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
       faq: req.body.faq,
+      date: req.body.date,
     },
     {
       where: {
