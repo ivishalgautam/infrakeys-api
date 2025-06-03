@@ -21,12 +21,14 @@ import requirementsModel from "./models/requirements.model.js";
 import requirementSequenceModel from "./models/requirement-sequence.model.js";
 import newsModel from "./models/news.model.js";
 import newsCategoryModel from "./models/news-category.model.js";
+import productPricingModel from "./models/product-pricing.model.js";
 
 export default {
   UserModel: userModel,
   ProductModel: productModel,
+  ProductPricingModel: productPricingModel,
   CategoryModel: categoryModel,
-  SubCategoryModel: subCategoryModel,
+  // SubCategoryModel: subCategoryModel,
   SubCatTypeModel: subCatTypeModel,
   BrandModel: brandModel,
   IndustriesModel: industriesModel,

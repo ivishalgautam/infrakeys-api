@@ -44,6 +44,7 @@ const constants = {
   models: {
     USER_TABLE: "users",
     PRODUCT_TABLE: "products",
+    PRODUCT_PRICING_TABLE: "product_pricings",
     CATEGORY_TABLE: "categories",
     CATEGORY_VARIANT_TABLE: "category_variants",
     SUB_CATEGORY_TABLE: "sub_categories",

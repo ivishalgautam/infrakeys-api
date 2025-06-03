@@ -1,9 +1,7 @@
 import fastifyMultipart from "@fastify/multipart";
 import fastifyStatic from "@fastify/static";
-import { fileURLToPath } from "url";
 import cors from "@fastify/cors";
 import { dirname } from "path";
-import path from "path";
 import fastifyView from "@fastify/view";
 import ejs from "ejs";
 
@@ -24,6 +22,17 @@ import blogController from "./app/api/blog/controller.js";
 import newsController from "./app/api/news/controller.js";
 import newsCategoriesController from "./app/api/news-category/controller.js";
 import { querySchema } from "./app/api/query/routes.js";
+
+import path from "path";
+import fs from "fs";
+import util from "util";
+import xlsx from "xlsx";
+import { pipeline } from "stream";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pump = util.promisify(pipeline);
+
 /*
   Register External packages, routes, database connection
 */
@@ -115,6 +124,25 @@ export default (app) => {
 
   // news categories
   app.get("/v1/news-categories", {}, newsCategoriesController.get);
+
+  app.post("/xlsx", {}, async (req, res) => {
+    const parts = req.parts();
+    for (const part of parts) {
+      if (part.file) {
+        const tempPath = path.join(__dirname, "uploads", part.filename);
+        await pump(part.file, fs.createWriteStream(tempPath));
+
+        const workbook = xlsx.readFile(tempPath);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const data = xlsx.utils.sheet_to_json(sheet);
+
+        fs.unlinkSync(tempPath);
+
+        return data;
+      }
+    }
+  });
 
   // enquiry
   // app.post("/v1/enquiries", {}, enquiryController.create);

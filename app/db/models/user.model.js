@@ -159,7 +159,7 @@ const get = async (req) => {
     plain: true,
   });
 
-  const total = parseInt(countResult.total, 10);
+  const total = parseInt(countResult?.total ?? 0, 10);
   const totalPages = Math.ceil(total / limit);
 
   return { users, total_pages: totalPages, total };
