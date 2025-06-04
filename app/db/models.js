@@ -28,7 +28,7 @@ export default {
   ProductModel: productModel,
   ProductPricingModel: productPricingModel,
   CategoryModel: categoryModel,
-  // SubCategoryModel: subCategoryModel,
+  SubCategoryModel: subCategoryModel,
   SubCatTypeModel: subCatTypeModel,
   BrandModel: brandModel,
   IndustriesModel: industriesModel,
