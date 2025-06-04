@@ -144,7 +144,6 @@ const verifyRefreshToken = async (req, res) => {
 const createOtp = async (req, res) => {
   try {
     const phone = req.body.phone;
-    await table.OtpModel.deleteByPhone(phone);
 
     const otp = crypto.randomInt(100000, 999999);
     const otpRecord = await table.OtpModel.create({ phone, otp });
