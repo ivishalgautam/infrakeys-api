@@ -178,7 +178,7 @@ const verifyOtp = async (req, res) => {
       return res.code(400).send({ status: false, message: "Incorrect otp!" });
     }
 
-    await table.OtpModel.deleteByPhone(phone);
+    // await table.OtpModel.deleteByPhone(phone);
     let user = await table.UserModel.getByPhone(req);
 
     if (!user) {
