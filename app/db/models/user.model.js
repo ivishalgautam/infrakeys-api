@@ -86,6 +86,7 @@ const create = async (req) => {
     phone: req.body?.phone,
     email: req.body?.email,
     role: req.body?.role,
+    is_verified: req.body?.is_verified ?? false,
   });
 };
 

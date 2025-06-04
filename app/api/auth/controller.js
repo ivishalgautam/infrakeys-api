@@ -111,8 +111,6 @@ const verifyCustomer = async (req, res) => {
 };
 
 const createNewCustomer = async (req, res) => {
-  console.log(req.body);
-
   try {
     const record = await table.UserModel.getByPhone(req);
     if (record) {
@@ -145,19 +143,14 @@ const verifyRefreshToken = async (req, res) => {
 
 const createOtp = async (req, res) => {
   try {
-    const user = await table.UserModel.getByPhone(req);
+    const phone = req.body.phone;
+    await table.OtpModel.deleteByPhone(phone);
+
     const otp = crypto.randomInt(100000, 999999);
-    const record = await table.OtpModel.getByUserId(user?.id);
+    const otpRecord = await table.OtpModel.create({ phone, otp });
+    await sendOtp({ phone: phone, otp });
 
-    if (record) {
-      await table.OtpModel.update({ user_id: user?.id, otp: otp });
-      await sendOtp({ name: user?.name, phone: user.phone, otp });
-    } else {
-      await table.OtpModel.create({ user_id: user?.id, otp: otp });
-      await sendOtp({ name: user?.name, phone: user.phone, otp });
-    }
-
-    res.send({ status: true, message: "Otp sent" });
+    res.send({ status: true, message: "Otp sent", request_id: otpRecord.id });
   } catch (error) {
     console.error(error);
     res.code(500).send({ status: false, message: error.message, error });
@@ -166,8 +159,9 @@ const createOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
-    const user = await table.UserModel.getByPhone(req);
-    const record = await table.OtpModel.getByUserId(user.id);
+    const requestId = req.body.request_id;
+    const phone = req.body.phone;
+    const record = await table.OtpModel.getById(requestId);
 
     if (!record) {
       return res.code(404).send({ message: "OTP not found!" });
@@ -175,7 +169,7 @@ const verifyOtp = async (req, res) => {
 
     const isExpired = moment(record.created_at).add(5, "minutes").isBefore();
     if (isExpired) {
-      await table.OtpModel.deleteByUserId(user.id);
+      await table.OtpModel.deleteById(requestId);
       return res
         .code(400)
         .send({ status: false, message: "Please resend OTP!" });
@@ -185,12 +179,15 @@ const verifyOtp = async (req, res) => {
       return res.code(400).send({ status: false, message: "Incorrect otp!" });
     }
 
-    await table.OtpModel.deleteByUserId(user.id);
+    await table.OtpModel.deleteByPhone(phone);
+    let user = await table.UserModel.getByPhone(req);
 
+    if (!user) {
+      req.body.is_verified = true;
+      user = await table.UserModel.createCustomer(req);
+    }
     const [jwtToken, expiresIn] = authToken.generateAccessToken(user);
     const refreshToken = authToken.generateRefreshToken(user);
-
-    await table.UserModel.verifyCustomer(user.id);
 
     res.send({
       status: true,
