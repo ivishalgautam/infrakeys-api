@@ -9,6 +9,7 @@ const create = async (req, res) => {
   try {
     const productId = req.body?.product_id;
     const percentage = req.body?.percentage ?? 0;
+    let mainProduct = null;
 
     let slug = slugify(`${req.body.title}-${req.body.place}`, { lower: true });
     req.body.slug = slug;
@@ -19,7 +20,9 @@ const create = async (req, res) => {
         .code(BAD_REQUEST)
         .send({ message: "Product exist with this name!" });
 
-    const mainProduct = await table.ProductPricingModel.getById(0, productId);
+    if (productId) {
+      mainProduct = await table.ProductPricingModel.getById(0, productId);
+    }
     if (productId && !mainProduct) {
       return res
         .code(404)
