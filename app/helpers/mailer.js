@@ -16,7 +16,7 @@ export const sendCredentials = async (template, mailTo) => {
   const mailOptions = {
     from: process.env.SMTP_EMAIL, // Sender address
     to: mailTo, // List of receivers
-    subject: "Credential Details For Onlineparts.shop", // Subject line
+    subject: "Credential Details For Infrakeys.com", // Subject line
     html: template, // Rendered email template
   };
 

@@ -7,14 +7,29 @@ const { BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND } = constants.http.status;
 
 const create = async (req, res) => {
   try {
-    let slug = slugify(req.body.title, { lower: true });
+    const productId = req.body?.product_id;
+    const percentage = req.body?.percentage ?? 0;
+
+    let slug = slugify(`${req.body.title}-${req.body.place}`, { lower: true });
     req.body.slug = slug;
+
     const record = await table.ProductPricingModel.getBySlug(req, slug);
     if (record)
       return res
         .code(BAD_REQUEST)
         .send({ message: "Product exist with this name!" });
 
+    const mainProduct = await table.ProductPricingModel.getById(0, productId);
+    if (productId && !mainProduct) {
+      return res
+        .code(404)
+        .send({ status: false, message: "Main product not found!" });
+    }
+    if (mainProduct) {
+      const percentageValue = (percentage / mainProduct.price) * 100;
+      req.body.price = mainProduct.price + percentageValue;
+    }
+    console.log(req.body);
     const product = await table.ProductPricingModel.create(req);
 
     res.send({ status: true, data: product });
@@ -22,13 +37,15 @@ const create = async (req, res) => {
     console.error(error);
     res
       .code(INTERNAL_SERVER_ERROR)
-      .send({ status: false, message: error.message, error });
+      .send({ status: false, message: error.message });
   }
 };
 
 const updateById = async (req, res) => {
   try {
-    let slug = slugify(req.body.title, { lower: true });
+    const price = req.body.price;
+    const percentage = req.body.percentage;
+    let slug = slugify(`${req.body.title}-${req.body.place}`, { lower: true });
     req.body.slug = slug;
 
     const record = await table.ProductPricingModel.getById(req, req.params.id);
@@ -49,7 +66,39 @@ const updateById = async (req, res) => {
         .code(BAD_REQUEST)
         .send({ message: "Product exist with this title!" });
 
-    await table.ProductPricingModel.updateById(req, req.params.id);
+    if (record.is_variant && percentage != record.percentage) {
+      const mainProduct = await table.ProductPricingModel.getById(
+        0,
+        record.product_id
+      );
+      const percentageValue = (percentage / 100) * mainProduct.price;
+      console.log({ percentageValue });
+      await table.ProductPricingModel.updateById({
+        params: { id: req.params.id },
+        body: {
+          ...req.body,
+          price: Number(mainProduct.price) + percentageValue,
+        },
+      });
+    } else {
+      await table.ProductPricingModel.updateById(req);
+    }
+
+    if (!record.is_variant && price != record.price) {
+      const childProducts = await table.ProductPricingModel.getByMain(
+        record.id
+      );
+
+      const promises = childProducts.map(async (prd) => {
+        const percentageValue = (prd.percentage / 100) * price;
+        await table.ProductPricingModel.updateById(
+          { body: { price: Number(price) + percentageValue } },
+          prd.id
+        );
+      });
+
+      await Promise.all(promises);
+    }
 
     res.send({ status: true, message: "Product updated." });
   } catch (error) {
@@ -164,13 +213,13 @@ const getById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    const { data } = await table.ProductPricingModel.get(req);
+    const data = await table.ProductPricingModel.get(req);
     res.send({ status: true, data });
   } catch (error) {
     console.error(error);
     res
       .code(INTERNAL_SERVER_ERROR)
-      .send({ status: false, message: error.message, error });
+      .send({ status: false, message: error.message });
   }
 };
 
