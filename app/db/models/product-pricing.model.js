@@ -45,7 +45,7 @@ const init = async (sequelize) => {
         defaultValue: 0,
       },
       percentage: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(10, 2),
         defaultValue: 0,
       },
       meta_title: { type: DataTypes.TEXT, allowNull: true },

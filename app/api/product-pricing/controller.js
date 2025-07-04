@@ -228,8 +228,7 @@ const get = async (req, res) => {
 
 const deleteById = async (req, res) => {
   try {
-    const record = await table.ProductPricingModel.getById(req, req.params.id);
-
+    const record = await table.ProductPricingModel.getById(req);
     if (!record)
       return res.code(NOT_FOUND).send({ message: "Product not found!" });
 
