@@ -19,7 +19,6 @@ async function create(req, res) {
     }
     res.send({ status: true, message: "Created." });
   } catch (error) {
-    console.log(error);
     res
       .status(INTERNAL_SERVER_ERROR)
       .send({ status: false, message: error.message, error });
@@ -37,7 +36,6 @@ async function update(req, res) {
     await table.PointsModel.update(req);
     res.send({ status: true, message: "Created." });
   } catch (error) {
-    console.log(error);
     res
       .status(INTERNAL_SERVER_ERROR)
       .send({ status: false, message: error.message, error });
@@ -48,7 +46,6 @@ async function get(req, res) {
   try {
     res.send({ status: true, data: await table.PointsModel.get(req) });
   } catch (error) {
-    console.log(error);
     res
       .status(INTERNAL_SERVER_ERROR)
       .send({ status: false, message: error.message, error });

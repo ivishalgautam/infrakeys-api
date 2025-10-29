@@ -11,14 +11,13 @@ async function create(req, res) {
     const requirementSequence = await table.RequirementSequenceModel.findOne();
     const nextValue = requirementSequence.value + 1;
     req.body.requirement_id = `${prefix}${nextValue}`;
-    console.log({ requirementSequence, nextValue });
+    // console.log({ requirementSequence, nextValue });
     const data = await table.RequirementsModel.create(req);
     if (data) {
       await table.RequirementSequenceModel.update({ value: nextValue });
     }
     res.send({ status: true, message: "Documents uploaded." });
   } catch (error) {
-    console.log(error);
     res
       .code(INTERNAL_SERVER_ERROR)
       .send({ status: false, message: error.message, error });

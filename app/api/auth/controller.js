@@ -47,7 +47,6 @@ const verifyUserCredentials = async (req, res) => {
       user_data: userData,
     });
   } catch (error) {
-    console.log(error);
     return res.code(500).send({ status: false, message: error.message, error });
   }
 };
@@ -66,7 +65,6 @@ const createNewUser = async (req, res) => {
 
     return res.send({ status: true, data: await table.UserModel.create(req) });
   } catch (error) {
-    console.log(error);
     return res.code(500).send({ status: false, message: error.message, error });
   }
 };
@@ -105,7 +103,6 @@ const verifyCustomer = async (req, res) => {
 
     return res.send({ status: true, message: "Otp sent." });
   } catch (error) {
-    console.log(error);
     return res.code(500).send({ status: false, message: error.message, error });
   }
 };

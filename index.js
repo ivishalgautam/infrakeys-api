@@ -7,7 +7,7 @@ const app = fastify({ logger: true });
 try {
   server(app);
 } catch (e) {
-  console.log({ error: e });
+  // console.log({ error: e });
   process.exit(1);
 }
 
