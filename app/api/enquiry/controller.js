@@ -286,8 +286,6 @@ const sendEnquiryToWhatsApp = async (req, res) => {
         .code(NOT_FOUND)
         .send({ status: false, message: "Product not found!" });
 
-    console.log(product);
-
     sendEnquiry({
       adminPhone: "7011691802",
       customerName:

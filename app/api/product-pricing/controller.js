@@ -32,7 +32,6 @@ const create = async (req, res) => {
       const percentageValue = (percentage / mainProduct.price) * 100;
       req.body.price = mainProduct.price + percentageValue;
     }
-    console.log(req.body);
     const product = await table.ProductPricingModel.create(req);
 
     res.send({ status: true, data: product });
@@ -75,7 +74,6 @@ const updateById = async (req, res) => {
         record.product_id
       );
       const percentageValue = (percentage / 100) * mainProduct.price;
-      console.log({ percentageValue });
       await table.ProductPricingModel.updateById({
         params: { id: req.params.id },
         body: {

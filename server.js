@@ -32,6 +32,9 @@ import { fileURLToPath } from "url";
 */
 
 export default (app) => {
+  app.addHook("onSend", async (req, reply, payload) => {
+    console.log("Payload length:", Buffer.byteLength(payload || ""));
+  });
   app.register(fastifyStatic, {
     root: path.join(dirname(fileURLToPath(import.meta.url), "public")),
   });

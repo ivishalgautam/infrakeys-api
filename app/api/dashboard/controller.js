@@ -28,8 +28,6 @@ const stats = async (req, res) => {
     const enquiries = await table.EnquiryModel.countEnquiriesStats();
     const orders = await table.OrderModel.countOrderStats();
 
-    console.log({ enquiries, orders });
-
     res.send({
       status: true,
       data: { enquiries, orders },

@@ -48,7 +48,6 @@ const getById = async (req, res) => {
 const getBySlug = async (req, res) => {
   try {
     const record = await table.NewsModel.getBySlug(req);
-    console.log({ record });
     if (!record) return res.code(404).send({ message: "News not found!" });
     res.send(record);
   } catch (error) {
@@ -75,8 +74,6 @@ const getRelatedNews = async (req, res) => {
     if (!record) return res.code(404).send({ message: "News not found!" });
 
     const data = await table.NewsModel.getRelatedNews(req);
-
-    console.log({ data });
 
     res.send(data);
   } catch (error) {
